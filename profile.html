@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Profile - CARBON</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'rp-base': '#191724',
+            'rp-surface': '#1f1d2e',
+            'rp-overlay': '#26233a',
+            'rp-muted': '#6e6a86',
+            'rp-subtle': '#908caa',
+            'rp-text': '#e0def4',
+            'rp-love': '#eb6f92',
+            'rp-gold': '#f6c177',
+            'rp-rose': '#ebbcba',
+            'rp-pine': '#31748f',
+            'rp-foam': '#9ccfd8',
+            'rp-iris': '#c4a7e7',
+            'rp-highlight-low': '#21202e',
+            'rp-highlight-med': '#403d52',
+            'rp-highlight-high': '#524f67'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-rp-base min-h-screen text-rp-text font-[Inter] antialiased">
+
+  <!-- Navbar -->
+  <nav class="flex items-center justify-between px-6 py-4 bg-rp-surface/80 border-b border-rp-overlay backdrop-blur-sm fixed top-0 left-0 right-0 z-50">
+    <a href="index.html" class="text-xl font-bold text-rp-foam tracking-tight">CARBON</a>
+    <div class="flex items-center gap-4">
+      <div id="userSection"></div>
+    </div>
+  </nav>
+
+  <!-- LOGIN SCREEN -->
+  <div id="loginScreen" class="flex flex-col items-center justify-center h-screen w-full bg-rp-base fixed left-0 top-0 z-50">
+    <div class="bg-rp-surface rounded-xl shadow-2xl p-8 border border-rp-overlay max-w-md w-full mx-4">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-rp-foam mb-2">Welcome Back</h1>
+        <p class="text-rp-subtle">Sign in to view your profile</p>
+      </div>
+      <button onclick="googleSignIn()" class="w-full flex items-center justify-center gap-3 bg-rp-foam hover:bg-rp-foam/90 text-rp-base font-medium px-6 py-3 rounded-lg transition-all duration-200">
+        <i class='bx bxl-google text-xl'></i>
+        Continue with Google
+      </button>
+      <div id="loginError" class="text-rp-love mt-4 text-sm text-center hidden"></div>
+    </div>
+  </div>
+
+  <main class="pt-20 pb-12 max-w-4xl mx-auto px-4">
+    <!-- PRIVATE PROFILE -->
+    <div id="profileContent" class="hidden">
+      <!-- Profile Header -->
+      <div class="bg-rp-surface rounded-xl p-6 mb-8 border border-rp-overlay">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          <img id="profilePhoto" class="w-16 h-16 rounded-full ring-2 ring-rp-foam/50" src="" alt="Profile Photo">
+          <div class="flex-1 text-center sm:text-left">
+            <h1 id="profileName" class="text-2xl font-bold text-rp-text mb-1"></h1>
+            <p id="profileEmail" class="text-rp-subtle text-sm"></p>
+          </div>
+          <button onclick="signOut()" class="text-rp-subtle hover:text-rp-love transition-colors text-sm">
+            Sign Out
+          </button>
+        </div>
+        
+        <!-- Public Profile Link -->
+        <div class="mt-6 pt-6 border-t border-rp-overlay">
+          <label class="block text-sm font-medium text-rp-text mb-2">Your Public Profile</label>
+          <div class="flex gap-2">
+            <input id="publicProfileLink" type="text" class="flex-1 px-3 py-2 bg-rp-overlay border border-rp-highlight-med rounded-lg text-rp-text text-sm font-mono focus:outline-none focus:ring-2 focus:ring-rp-foam/50" readonly>
+            <button id="copyProfileLinkBtn" class="px-4 py-2 bg-rp-foam hover:bg-rp-foam/90 text-rp-base rounded-lg transition-colors">
+              <i class='bx bx-copy'></i>
+            </button>
+          </div>
+          <div id="copyFeedback" class="text-rp-foam mt-2 text-sm opacity-0 transition-opacity duration-300">Copied to clipboard!</div>
+        </div>
+      </div>
+
+      <!-- Recent Games -->
+      <div id="recentGamesContainer" class="mb-8">
+        <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+          <i class='bx bx-time text-rp-gold'></i>
+          Recently Played
+        </h2>
+        <div id="recentGamesList" class="space-y-3"></div>
+      </div>
+
+      <!-- Games Grid -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- Favorite Games -->
+        <div>
+          <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+            <i class='bx bx-heart text-rp-love'></i>
+            Favorite Games
+          </h2>
+          <div id="favoriteGamesList" class="space-y-3"></div>
+        </div>
+
+        <!-- Liked Games -->
+        <div>
+          <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+            <i class='bx bx-like text-rp-iris'></i>
+            Liked Games
+          </h2>
+          <div id="likedGamesList" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <div id="activityFeedSection" class="mb-8">
+        <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+          <i class='bx bx-activity text-rp-pine'></i>
+          Recent Activity
+        </h2>
+        <div class="bg-rp-surface rounded-xl border border-rp-overlay p-4">
+          <div id="activityFeed" class="max-h-64 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PUBLIC PROFILE -->
+    <div id="publicProfileContent" class="hidden">
+      <!-- Public Profile Header -->
+      <div class="bg-rp-surface rounded-xl p-6 mb-8 border border-rp-overlay">
+        <div class="flex flex-col sm:flex-row items-center gap-6">
+          <img id="publicProfilePhoto" class="w-16 h-16 rounded-full ring-2 ring-rp-foam/50" src="" alt="Profile Photo">
+          <div class="flex-1 text-center sm:text-left">
+            <h1 id="publicProfileName" class="text-2xl font-bold text-rp-text mb-1"></h1>
+            <p id="publicProfileUsername" class="text-rp-subtle text-sm"></p>
+          </div>
+        </div>
+        
+        <!-- Share Profile -->
+        <div class="mt-6 pt-6 border-t border-rp-overlay">
+          <label class="block text-sm font-medium text-rp-text mb-2">Share this profile</label>
+          <div class="flex gap-2">
+            <input id="publicProfileUrl" type="text" class="flex-1 px-3 py-2 bg-rp-overlay border border-rp-highlight-med rounded-lg text-rp-text text-sm font-mono focus:outline-none focus:ring-2 focus:ring-rp-foam/50" readonly>
+            <button id="copyPublicProfileUrlBtn" class="px-4 py-2 bg-rp-foam hover:bg-rp-foam/90 text-rp-base rounded-lg transition-colors">
+              <i class='bx bx-copy'></i>
+            </button>
+          </div>
+          <div id="copyPublicFeedback" class="text-rp-foam mt-2 text-sm opacity-0 transition-opacity duration-300">Copied to clipboard!</div>
+        </div>
+      </div>
+
+      <!-- Public Recent Games -->
+      <div id="publicRecentGamesContainer" class="mb-8">
+        <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+          <i class='bx bx-time text-rp-gold'></i>
+          Recently Played
+        </h2>
+        <div id="publicRecentGamesList" class="space-y-3"></div>
+      </div>
+
+      <!-- Public Games Grid -->
+      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+        <!-- Public Favorite Games -->
+        <div>
+          <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+            <i class='bx bx-heart text-rp-love'></i>
+            Favorite Games
+          </h2>
+          <div id="publicFavoriteGamesList" class="space-y-3"></div>
+        </div>
+
+        <!-- Public Liked Games -->
+        <div>
+          <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+            <i class='bx bx-like text-rp-iris'></i>
+            Liked Games
+          </h2>
+          <div id="publicLikedGamesList" class="space-y-3"></div>
+        </div>
+      </div>
+
+      <!-- Public Activity Feed -->
+      <div id="publicActivityFeedSection" class="mb-8">
+        <h2 class="text-xl font-semibold text-rp-text mb-4 flex items-center gap-2">
+          <i class='bx bx-activity text-rp-pine'></i>
+          Recent Activity
+        </h2>
+        <div class="bg-rp-surface rounded-xl border border-rp-overlay p-4">
+          <div id="publicActivityFeed" class="max-h-64 overflow-y-auto"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // FIREBASE INIT
+    const firebaseConfig = {
+      apiKey: "AIzaSyC4ilHYP1T-kdXbWPoHJHhD2aj0pNWmMec",
+      authDomain: "carbon-services.firebaseapp.com",
+      projectId: "carbon-services",
+      storageBucket: "carbon-services.firebasestorage.app",
+      messagingSenderId: "288385472070",
+      appId: "1:288385472070:web:c4be3ff186e248fc645c47",
+      measurementId: "G-Y2K1RQYE74"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function googleSignIn() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .catch((error) => {
+          document.getElementById('loginError').innerText = error.message;
+          document.getElementById('loginError').classList.remove('hidden');
+        });
+    }
+    function signOut() {
+      auth.signOut().then(() => location.reload());
+    }
+
+    let gamesData = [];
+    async function loadGamesData() {
+      const res = await fetch('games.json');
+      gamesData = await res.json();
+    }
+
+    async function getUserGameLists(uid) {
+      const doc = await db.collection('users').doc(uid).get();
+      return doc.exists ? doc.data() : { likedGames: [], favoriteGames: [], playlist: [], history: [] };
+    }
+
+    async function getUserPublicProfile(uid) {
+      const doc = await db.collection('users').doc(uid).get();
+      if (doc.exists) {
+        const user = doc.data();
+        return {
+          displayName: user.displayName || '',
+          username: user.username || '',
+          photoURL: user.photoURL || '',
+          likedGames: user.likedGames || [],
+          favoriteGames: user.favoriteGames || [],
+          history: user.history || [],
+        };
+      }
+      return null;
+    }
+
+    async function ensureUserDoc(user) {
+      const userRef = db.collection('users').doc(user.uid);
+      const doc = await userRef.get();
+      if (!doc.exists) {
+        await userRef.set({
+          displayName: user.displayName || "",
+          photoURL: user.photoURL || "",
+          email: user.email || "",
+          username: "",
+          likedGames: [],
+          favoriteGames: [],
+          history: [],
+        });
+      } else {
+        let needsUpdate = false;
+        const data = doc.data();
+        const updateFields = {};
+        if (!data.displayName && user.displayName) {
+          updateFields.displayName = user.displayName;
+          needsUpdate = true;
+        }
+        if (!data.photoURL && user.photoURL) {
+          updateFields.photoURL = user.photoURL;
+          needsUpdate = true;
+        }
+        if (needsUpdate) await userRef.update(updateFields);
+      }
+    }
+
+    function renderUserSection(user) {
+      const section = document.getElementById('userSection');
+      if (!user) {
+        section.innerHTML = '';
+      } else {
+        section.innerHTML = `
+          <div class="flex items-center gap-3">
+            <img src="${user.photoURL}" class="w-8 h-8 rounded-full ring-1 ring-rp-foam/30">
+            <span class="text-rp-text font-medium">${user.displayName}</span>
+          </div>
+        `;
+      }
+    }
+
+    function renderGamesList(listId, gameIds, label) {
+      const listEl = document.getElementById(listId);
+      if (!Array.isArray(gameIds) || gameIds.length === 0) {
+        listEl.innerHTML = `<div class="text-rp-subtle text-sm italic py-4 text-center">No ${label} yet</div>`;
+        return;
+      }
+      const seen = {};
+      const uniqueIds = [];
+      for (const id of gameIds) {
+        if (!seen[id]) {
+          seen[id] = true;
+          uniqueIds.push(id);
+        }
+      }
+      listEl.innerHTML = uniqueIds.map(id => {
+        const game = gamesData.find(g => String(g.id) === String(id));
+        if (!game) return '';
+        return `
+          <a href="play.html?id=${game.id}" class="group block bg-rp-surface border border-rp-overlay rounded-lg p-4 hover:border-rp-foam/50 transition-all duration-200">
+            <div class="flex items-center gap-4">
+              <div class="w-16 h-12 flex-shrink-0 rounded-lg overflow-hidden bg-rp-overlay">
+                <img src="${game.image}" alt="${game.title}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-medium text-rp-text truncate">${game.title}</h3>
+                <p class="text-sm text-rp-subtle truncate">${game.description}</p>
+                <div class="flex items-center gap-2 mt-1">
+                  <span class="text-xs px-2 py-1 bg-rp-foam/20 text-rp-foam rounded">${game.category}</span>
+                  ${game.featured ? '<span class="text-xs px-2 py-1 bg-rp-iris/20 text-rp-iris rounded">Featured</span>' : ''}
+                </div>
+              </div>
+              <div class="flex items-center text-rp-foam group-hover:text-rp-foam/80 transition-colors">
+                <i class='bx bx-play-circle text-xl'></i>
+              </div>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+
+    function getActivityDescription(activity) {
+      const gameTitle = activity.data && activity.data.gameId ?
+        (gamesData.find(g => g.id === String(activity.data.gameId))?.title || 'Unknown Game') : '';
+      switch (activity.action) {
+        case 'play':
+          return `Started playing ${gameTitle}`;
+        case 'continue':
+          return `Continued playing ${gameTitle}`;
+        case 'random-play':
+          return `Played random game: ${gameTitle}`;
+        case 'search':
+          return `Searched for "${activity.data.query}"`;
+        case 'pin':
+          return `Pinned ${gameTitle}`;
+        case 'unpin':
+          return `Unpinned ${gameTitle}`;
+        case 'page-view':
+          return `Visited ${activity.data.page} page`;
+        default:
+          return 'Unknown activity';
+      }
+    }
+
+    function getActivityIcon(action) {
+      switch (action) {
+        case 'play':
+        case 'continue':
+        case 'random-play':
+          return 'bx-play-circle';
+        case 'search':
+          return 'bx-search';
+        case 'pin':
+          return 'bx-pin';
+        case 'unpin':
+          return 'bx-pin';
+        case 'page-view':
+          return 'bx-globe';
+        default:
+          return 'bx-activity';
+      }
+    }
+
+    function getTimeAgo(timestamp) {
+      const now = Date.now();
+      const diff = now - timestamp;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(diff / 3600000);
+      const days = Math.floor(diff / 86400000);
+      if (days > 0) return `${days}d ago`;
+      if (hours > 0) return `${hours}h ago`;
+      if (minutes > 0) return `${minutes}m ago`;
+      return 'Just now';
+    }
+
+    function renderActivityFeed(activities, feedId) {
+      const feed = document.getElementById(feedId);
+      if (!activities || activities.length === 0) {
+        feed.innerHTML = '<p class="text-rp-subtle text-sm text-center py-4">No recent activity</p>';
+        return;
+      }
+      feed.innerHTML = activities.map(activity => {
+        const timeAgo = getTimeAgo(activity.timestamp);
+        const description = getActivityDescription(activity);
+        return `
+          <div class="flex items-start gap-3 py-3 border-b border-rp-overlay last:border-0">
+            <div class="w-8 h-8 rounded-full bg-rp-overlay flex items-center justify-center flex-shrink-0">
+              <i class='bx ${getActivityIcon(activity.action)} text-rp-foam text-sm'></i>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-rp-text text-sm">${description}</p>
+              <p class="text-rp-muted text-xs mt-1">${timeAgo}</p>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function loadActivityFeed(uid, feedId) {
+      const doc = await db.collection('user-activity').doc(uid).get();
+      if (doc.exists) {
+        const activities = doc.data().activities || [];
+        renderActivityFeed(activities.slice(-10).reverse(), feedId);
+      } else {
+        renderActivityFeed([], feedId);
+      }
+    }
+
+    function getUidFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('uid');
+    }
+
+    async function showPublicProfile(uid) {
+      await loadGamesData();
+      const userProfile = await getUserPublicProfile(uid);
+      if (!userProfile || !userProfile.displayName) {
+        document.getElementById('publicProfileContent').innerHTML = `
+          <div class="text-center py-16">
+            <div class="bg-rp-surface rounded-xl p-8 border border-rp-overlay">
+              <i class='bx bx-user-x text-4xl text-rp-muted mb-4'></i>
+              <h2 class="text-xl font-semibold text-rp-text mb-2">User not found</h2>
+              <p class="text-rp-subtle">This profile doesn't exist or has been removed.</p>
+            </div>
+          </div>
+        `;
+        document.getElementById('publicProfileContent').classList.remove('hidden');
+        return;
+      }
+      document.getElementById('publicProfilePhoto').src = userProfile.photoURL;
+      document.getElementById('publicProfileName').textContent = userProfile.displayName || "Unknown User";
+      document.getElementById('publicProfileUsername').textContent = userProfile.username ? `@${userProfile.username}` : '';
+      renderGamesList('publicRecentGamesList', (userProfile.history || []).slice().reverse(), 'recent games');
+      renderGamesList('publicFavoriteGamesList', userProfile.favoriteGames, 'favorite games');
+      renderGamesList('publicLikedGamesList', userProfile.likedGames, 'liked games');
+      await loadActivityFeed(uid, 'publicActivityFeed');
+      
+      const url = `${window.location.origin}${window.location.pathname}?uid=${encodeURIComponent(uid)}`;
+      const urlInput = document.getElementById('publicProfileUrl');
+      urlInput.value = url;
+      const copyBtn = document.getElementById('copyPublicProfileUrlBtn');
+      const feedback = document.getElementById('copyPublicFeedback');
+      copyBtn.onclick = function() {
+        urlInput.select();
+        urlInput.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(urlInput.value).then(function() {
+          feedback.style.opacity = 1;
+          setTimeout(() => feedback.style.opacity = 0, 1200);
+        });
+      };
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const publicUid = getUidFromUrl();
+      if (publicUid) {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('profileContent').classList.add('hidden');
+        document.getElementById('publicProfileContent').classList.remove('hidden');
+        await showPublicProfile(publicUid);
+        return;
+      }
+
+      document.getElementById('profileContent').classList.add('hidden');
+      document.getElementById('loginScreen').classList.remove('hidden');
+      await loadGamesData();
+      auth.onAuthStateChanged(async (user) => {
+        renderUserSection(user);
+        if (!user) {
+          document.getElementById('loginScreen').classList.remove('hidden');
+          document.getElementById('profileContent').classList.add('hidden');
+          document.getElementById('publicProfileContent').classList.add('hidden');
+          return;
+        }
+        await ensureUserDoc(user);
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('profileContent').classList.remove('hidden');
+        document.getElementById('publicProfileContent').classList.add('hidden');
+        document.getElementById('profilePhoto').src = user.photoURL;
+        document.getElementById('profileName').textContent = user.displayName;
+        document.getElementById('profileEmail').textContent = user.email;
+        const lists = await getUserGameLists(user.uid);
+        renderGamesList('recentGamesList', (lists.history || []).slice().reverse(), 'recent games');
+        renderGamesList('favoriteGamesList', lists.favoriteGames, 'favorite games');
+        renderGamesList('likedGamesList', lists.likedGames, 'liked games');
+        await loadActivityFeed(user.uid, 'activityFeed');
+        
+        const url = `${window.location.origin}${window.location.pathname}?uid=${encodeURIComponent(user.uid)}`;
+        const linkInput = document.getElementById('publicProfileLink');
+        linkInput.value = url;
+        const copyBtn = document.getElementById('copyProfileLinkBtn');
+        const feedback = document.getElementById('copyFeedback');
+        copyBtn.onclick = function() {
+          linkInput.select();
+          linkInput.setSelectionRange(0, 99999);
+          navigator.clipboard.writeText(linkInput.value).then(function() {
+            feedback.style.opacity = 1;
+            setTimeout(() => feedback.style.opacity = 0, 1200);
+          });
+        };
+      });
+    });
+  </script>
+</body>
+</html>
