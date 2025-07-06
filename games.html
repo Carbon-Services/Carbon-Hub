@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,8 +6,33 @@
   <title>CARBON - Games</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'rp-base': '#191724',
+            'rp-surface': '#1f1d2e',
+            'rp-overlay': '#26233a',
+            'rp-muted': '#6e6a86',
+            'rp-subtle': '#908caa',
+            'rp-text': '#e0def4',
+            'rp-love': '#eb6f92',
+            'rp-gold': '#f6c177',
+            'rp-rose': '#ebbcba',
+            'rp-pine': '#31748f',
+            'rp-foam': '#9ccfd8',
+            'rp-iris': '#c4a7e7',
+            'rp-highlight-low': '#21202e',
+            'rp-highlight-med': '#403d52',
+            'rp-highlight-high': '#524f67'
+          }
+        }
+      }
+    }
+  </script>
   <style>
     @keyframes float {
       0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -21,42 +47,89 @@
       from { transform: translateY(30px); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+    
     .category-badge, .category-carousel-btn.active, .category-btn.active {
-      background-color: #22d3ee22;
-      color: #06b6d4 !important;
-      border-color: #06b6d4 !important;
+      background: linear-gradient(135deg, rgba(156, 207, 216, 0.2) 0%, rgba(49, 116, 143, 0.2) 100%);
+      color: #9ccfd8 !important;
+      border-color: #9ccfd8 !important;
     }
     .category-carousel-btn {
       transition: all 0.16s;
-      border-color: #06b6d433;
-      background: #1a1a2e;
-      color: #cbd5e1;
+      border-color: rgba(156, 207, 216, 0.2);
+      background: #1f1d2e;
+      color: #908caa;
     }
     .category-carousel-btn:hover {
-      color: #06b6d4 !important;
-      background: #0ea5e933;
+      color: #9ccfd8 !important;
+      background: linear-gradient(135deg, rgba(156, 207, 216, 0.1) 0%, rgba(49, 116, 143, 0.1) 100%);
     }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .autocomplete-dropdown {
       max-height: 200px;
       overflow-y: auto;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+      background: #1f1d2e;
+      border-color: #26233a;
     }
     .autocomplete-item {
       transition: all 0.2s ease;
+      color: #e0def4;
     }
     .autocomplete-item:hover, .autocomplete-item.highlighted {
-      background: rgba(6, 182, 212, 0.2);
-      color: #06b6d4;
+      background: rgba(156, 207, 216, 0.2);
+      color: #9ccfd8;
     }
     .gotd-badge {
-      background: linear-gradient(45deg, #fbbf24, #f59e0b);
+      background: linear-gradient(45deg, #f6c177, #eb6f92);
       animation: pulse 2s infinite;
     }
     .continue-card {
-      background: linear-gradient(135deg, rgba(34, 211, 238, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
-      border: 1px solid rgba(34, 211, 238, 0.3);
+      background: linear-gradient(135deg, rgba(156, 207, 216, 0.1) 0%, rgba(196, 167, 231, 0.1) 100%);
+      border: 1px solid rgba(156, 207, 216, 0.3);
+    }
+    .glass-card {
+      background: rgba(31, 29, 46, 0.8);
+      border: 1px solid rgba(38, 35, 58, 0.6);
+      backdrop-filter: blur(10px);
+    }
+    .game-card {
+      background: linear-gradient(135deg, rgba(31, 29, 46, 0.9) 0%, rgba(38, 35, 58, 0.7) 100%);
+      border: 1px solid rgba(38, 35, 58, 0.8);
+      transition: all 0.3s ease;
+    }
+    .game-card:hover {
+      border-color: rgba(156, 207, 216, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #9ccfd8 0%, #c4a7e7 50%, #eb6f92 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #9ccfd8 0%, #31748f 100%);
+      color: #191724;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #31748f 0%, #9ccfd8 100%);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: linear-gradient(135deg, #c4a7e7 0%, #eb6f92 100%);
+      color: #191724;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      background: linear-gradient(135deg, #eb6f92 0%, #c4a7e7 100%);
+      transform: translateY(-1px);
     }
   </style>
   <script type="module">
@@ -79,217 +152,153 @@
     window.auth = getAuth(window.firebaseApp);
   </script>
 </head>
-<body class="bg-gradient-to-br from-[#0f0f23] via-[#1a1a2e] to-[#16213e] min-h-screen text-white overflow-x-hidden relative font-[Inter]">
+<body class="bg-rp-base min-h-screen text-rp-text overflow-x-hidden relative font-[Inter] antialiased">
 
-  <div class="pointer-events-none absolute rounded-full opacity-10 blur-3xl w-[300px] h-[300px] top-[10%] left-[10%] bg-gradient-to-br from-cyan-400 to-indigo-500 animate-[float_20s_infinite_ease-in-out]"></div>
-  <div class="pointer-events-none absolute rounded-full opacity-10 blur-3xl w-[250px] h-[250px] top-[60%] right-[10%] bg-gradient-to-br from-indigo-500 to-purple-500 animate-[float_20s_infinite_ease-in-out] delay-7000"></div>
-  <div class="pointer-events-none absolute rounded-full opacity-10 blur-3xl w-[200px] h-[200px] bottom-[20%] left-[20%] bg-gradient-to-br from-cyan-400 to-purple-500 animate-[float_20s_infinite_ease-in-out] delay-14000"></div>
+  <!-- Floating background elements -->
+  <div class="pointer-events-none absolute rounded-full opacity-5 blur-3xl w-[300px] h-[300px] top-[10%] left-[10%] bg-gradient-to-br from-rp-foam to-rp-iris animate-[float_20s_infinite_ease-in-out]"></div>
+  <div class="pointer-events-none absolute rounded-full opacity-5 blur-3xl w-[250px] h-[250px] top-[60%] right-[10%] bg-gradient-to-br from-rp-iris to-rp-love animate-[float_20s_infinite_ease-in-out] delay-[7s]"></div>
+  <div class="pointer-events-none absolute rounded-full opacity-5 blur-3xl w-[200px] h-[200px] bottom-[20%] left-[20%] bg-gradient-to-br from-rp-foam to-rp-rose animate-[float_20s_infinite_ease-in-out] delay-[14s]"></div>
 
-  <nav class="fixed top-0 left-0 right-0 z-[1000] flex justify-between items-center px-8 py-4 bg-[#0f0f23cc] border-b border-white/10 backdrop-blur-md animate-[slideDown_0.5s_ease-out]">
-    <div class="navbar-brand text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent tracking-tighter select-none">CARBON</div>
+  <!-- Navigation -->
+  <nav class="fixed top-0 left-0 right-0 z-[1000] flex justify-between items-center px-8 py-4 bg-rp-surface/80 border-b border-rp-overlay backdrop-blur-md animate-[slideDown_0.5s_ease-out]">
+    <div class="navbar-brand text-2xl md:text-3xl font-extrabold text-rp-foam tracking-tighter select-none">CARBON</div>
     <div class="flex items-center gap-4">
-      <div id="pinnedGame" class="hidden lg:flex items-center gap-3 bg-gradient-to-r from-cyan-400/10 to-indigo-500/10 border border-cyan-400/30 rounded-lg px-4 py-2 backdrop-blur-sm">
-        <i class='bx bx-pin text-cyan-400 text-lg'></i>
-        <span class="text-sm font-semibold text-white/90" id="pinnedGameTitle">No game pinned</span>
-        <button onclick="unpinGame()" class="text-white/60 hover:text-red-400 transition-colors ml-2">
+      <div id="pinnedGame" class="hidden lg:flex items-center gap-3 glass-card rounded-lg px-4 py-2">
+        <i class='bx bx-pin text-rp-foam text-lg'></i>
+        <span class="text-sm font-semibold text-rp-text" id="pinnedGameTitle">No game pinned</span>
+        <button onclick="unpinGame()" class="text-rp-muted hover:text-rp-love transition-colors ml-2">
           <i class='bx bx-x text-sm'></i>
         </button>
       </div>
       <div id="authContainer" class="flex items-center gap-2">
-        <button id="signInBtn" onclick="signInUser()" class="bg-gradient-to-r from-cyan-400 to-indigo-500 text-black font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 text-sm">Sign In</button>
+        <button id="signInBtn" onclick="signInUser()" class="btn-primary font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300 text-sm">Sign In</button>
         <div id="userProfile" class="hidden flex items-center gap-2">
-          <img id="userAvatar" src="" alt="User" class="w-8 h-8 rounded-full border-2 border-cyan-400/30">
-          <span id="userName" class="text-sm font-medium text-white/90"></span>
-          <button onclick="signOutUser()" class="text-white/60 hover:text-red-400 transition-colors">
+          <img id="userAvatar" src="" alt="User" class="w-8 h-8 rounded-full border-2 border-rp-foam/30">
+          <span id="userName" class="text-sm font-medium text-rp-text"></span>
+          <button onclick="signOutUser()" class="text-rp-muted hover:text-rp-love transition-colors">
             <i class='bx bx-log-out text-lg'></i>
           </button>
         </div>
       </div>
-      <div
-        class="hamburger flex flex-col gap-1.5 cursor-pointer p-2 transition-transform duration-300"
-        id="hamburger"
-      >
-        <span
-          class="block w-6 h-0.5 rounded bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all duration-300"
-        ></span>
-        <span
-          class="block w-6 h-0.5 rounded bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all duration-300"
-        ></span>
-        <span
-          class="block w-6 h-0.5 rounded bg-gradient-to-r from-cyan-400 to-indigo-500 transition-all duration-300"
-        ></span>
+      <div class="hamburger flex flex-col gap-1.5 cursor-pointer p-2 transition-transform duration-300" onclick="toggleMenu()">
+        <span class="block w-6 h-0.5 rounded bg-rp-foam transition-all duration-300"></span>
+        <span class="block w-6 h-0.5 rounded bg-rp-foam transition-all duration-300"></span>
+        <span class="block w-6 h-0.5 rounded bg-rp-foam transition-all duration-300"></span>
       </div>
     </div>
   </nav>
 
-    <aside
-      class="fixed top-0 right-[-100%] w-72 h-full bg-[#0f0f23f2] backdrop-blur-md border-l border-white/10 pt-24 px-8 z-[999] transition-all duration-300"
-      id="mobileMenu"
-    >
-      <a
-        href="/"
-        class="mobile-menu-item block py-4 mb-2 text-white font-semibold text-lg border-b border-white/10 relative overflow-hidden transition-all duration-300 hover:text-cyan-400 hover:pl-4"
-        >Home</a
-      >
-      <a
-        href="/games.html"
-        class="mobile-menu-item block py-4 mb-2 text-white font-semibold text-lg border-b border-white/10 relative overflow-hidden transition-all duration-300 hover:text-cyan-400 hover:pl-4"
-        >Games</a
-      >
-      <a
-        href="/proxy.html"
-        class="mobile-menu-item block py-4 mb-2 text-white font-semibold text-lg border-b border-white/10 relative overflow-hidden transition-all duration-300 hover:text-cyan-400 hover:pl-4"
-        >Proxy</a
-      >
-      <a
-        href="/settings.html"
-        class="mobile-menu-item block py-4 mb-2 text-white font-semibold text-lg border-b border-white/10 relative overflow-hidden transition-all duration-300 hover:text-cyan-400 hover:pl-4"
-        >Settings</a
-      >
-    </aside>
-    <div
-      class="overlay fixed inset-0 bg-black bg-opacity-50 opacity-0 invisible transition-all duration-300 z-[998]"
-      id="overlay"
-    ></div>
+  <!-- Main Content -->
   <main class="pt-28 pb-8 px-4 relative z-10">
     <div class="max-w-7xl mx-auto">
+      <!-- Header -->
       <div class="text-center mb-12 animate-[fadeInUp_1s_ease-out]">
-        <h1 class="text-5xl md:text-6xl font-black bg-gradient-to-r from-cyan-400 via-indigo-500 to-purple-400 bg-clip-text text-transparent mb-4 tracking-tighter">Games Collection</h1>
-        <p class="text-white/70 text-lg max-w-2xl mx-auto">Discover amazing games across all genres. Play instantly in your browser!</p>
+        <h1 class="text-5xl md:text-6xl font-black gradient-text mb-4 tracking-tighter">Games Collection</h1>
+        <p class="text-rp-subtle text-lg max-w-2xl mx-auto">Discover amazing games across all genres. Play instantly in your browser!</p>
       </div>
 
+      <!-- Search Bar -->
       <div class="mb-8 animate-[fadeInUp_1s_ease-out_0.2s_both]">
         <div class="relative max-w-2xl mx-auto">
-          <input type="text" id="searchInput" placeholder="Search games..." class="w-full px-6 py-4 pl-14 pr-32 bg-white/5 border border-white/10 rounded-2xl text-white placeholder-white/50 focus:outline-none focus:border-cyan-400/50 focus:bg-white/10 transition-all duration-300" oninput="handleSearchInput()" onkeydown="handleSearchKeydown(event)" onfocus="showAutocomplete()" onblur="hideAutocomplete()">
-          <i class='bx bx-search absolute left-5 top-1/2 -translate-y-1/2 text-white/50 text-xl'></i>
-          <button onclick="playRandomGame()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-purple-400 to-pink-400 text-white font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-transform duration-300 text-sm"><i class='bx bx-shuffle mr-1'></i>Random</button>
-          <div id="autocompleteDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#1a1a2e] border border-white/10 rounded-2xl autocomplete-dropdown backdrop-blur-md z-50">
+          <input type="text" id="searchInput" placeholder="Search games..." class="w-full px-6 py-4 pl-14 pr-32 bg-rp-surface/50 border border-rp-overlay rounded-2xl text-rp-text placeholder-rp-muted focus:outline-none focus:border-rp-foam/50 focus:bg-rp-surface/80 transition-all duration-300 backdrop-blur-sm" oninput="handleSearchInput()" onkeydown="handleSearchKeydown(event)" onfocus="showAutocomplete()" onblur="hideAutocomplete()">
+          <i class='bx bx-search absolute left-5 top-1/2 -translate-y-1/2 text-rp-muted text-xl'></i>
+          <button onclick="playRandomGame()" class="absolute right-2 top-1/2 -translate-y-1/2 btn-secondary font-semibold px-4 py-2 rounded-lg hover:scale-105 transition-all duration-300 text-sm">
+            <i class='bx bx-shuffle mr-1'></i>Random
+          </button>
+          <div id="autocompleteDropdown" class="hidden absolute top-full left-0 right-0 mt-2 autocomplete-dropdown rounded-2xl backdrop-blur-md z-50">
             <div id="autocompleteResults" class="p-2"></div>
           </div>
         </div>
       </div>
 
-
-
-      <div id="continuePlayingSection" class="hidden mb-12 animate-[fadeInUp_1s_ease-out_0.4s_both]">
-        <h2 class="text-2xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">Continue Playing</h2>
-        <div id="continuePlayingCard" class="continue-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-transform duration-300"></div>
+      <!-- Category Buttons -->
+      <div class="mb-12 animate-[fadeInUp_1s_ease-out_0.4s_both]">
+        <div class="flex flex-wrap justify-center gap-3" id="categoryButtons">
+          <button class="category-btn active px-6 py-3 rounded-full border border-rp-overlay text-rp-text font-semibold transition-all duration-300 hover:border-rp-foam/50" onclick="filterGames('all', event)">All Games</button>
+        </div>
       </div>
 
-      <div class="mb-12 animate-[fadeInUp_1s_ease-out_0.5s_both]">
+      <!-- Continue Playing Section -->
+      <div id="continuePlayingSection" class="hidden mb-12 animate-[fadeInUp_1s_ease-out_0.4s_both]">
+        <h2 class="text-2xl font-bold mb-6 gradient-text">Continue Playing</h2>
+        <div id="continuePlayingCard" class="continue-card rounded-2xl p-6 cursor-pointer hover:scale-105 transition-all duration-300"></div>
+      </div>
+
+        <div class="mb-12 animate-[fadeInUp_1s_ease-out_0.5s_both]">
         <h2 class="text-2xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent flex items-center gap-3">
           <span class="gotd-badge px-3 py-1 rounded-full text-black font-bold text-sm">SPECIAL</span>
           Game of the Day
         </h2>
         <div id="gameOfTheDayCard" class="bg-gradient-to-br from-amber-400/10 to-orange-500/10 border border-amber-400/30 rounded-2xl p-6 hover:scale-105 transition-transform duration-300"></div>
       </div>
-
+     
+      <!-- Daily Picks -->
       <div class="mb-12 animate-[fadeInUp_1s_ease-out_0.55s_both]">
-        <h2 class="text-2xl font-bold mb-6 bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent flex items-center gap-3">
-          <i class='bx bx-star text-yellow-400'></i>
+        <h2 class="text-2xl font-bold mb-6 gradient-text flex items-center gap-3">
+          <i class='bx bx-star text-rp-gold'></i>
           Daily Picks
         </h2>
         <div id="dailyPicksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
       </div>
 
+      <!-- Featured Games Carousel -->
       <div class="mb-16 animate-[fadeInUp_1s_ease-out_0.6s_both]">
-        <h2 class="text-3xl font-bold mb-8 bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">Featured Games</h2>
+        <h2 class="text-3xl font-bold mb-8 gradient-text">Featured Games</h2>
         <div class="relative">
           <div class="overflow-hidden rounded-2xl">
             <div id="featuredCarousel" class="flex transition-transform duration-500 ease-in-out"></div>
           </div>
-          <button onclick="previousSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm"><i class='bx bx-chevron-left text-2xl'></i></button>
-          <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-3 rounded-full transition-all duration-300 backdrop-blur-sm"><i class='bx bx-chevron-right text-2xl'></i></button>
+          <button onclick="previousSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 bg-rp-surface/80 hover:bg-rp-surface text-rp-text p-3 rounded-full transition-all duration-300 backdrop-blur-sm border border-rp-overlay">
+            <i class='bx bx-chevron-left text-2xl'></i>
+          </button>
+          <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 bg-rp-surface/80 hover:bg-rp-surface text-rp-text p-3 rounded-full transition-all duration-300 backdrop-blur-sm border border-rp-overlay">
+            <i class='bx bx-chevron-right text-2xl'></i>
+          </button>
         </div>
       </div>
 
+      <!-- All Games Grid -->
       <div class="animate-[fadeInUp_1s_ease-out_0.8s_both]">
         <div class="flex justify-between items-center mb-8">
-          <h2 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">All Games</h2>
-          <div class="text-white/60" id="gameCount">Loading games...</div>
+          <h2 class="text-3xl font-bold gradient-text">All Games</h2>
+          <div class="text-rp-muted" id="gameCount">Loading games...</div>
         </div>
         <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <div class="game-card bg-white/5 border border-white/10 rounded-2xl overflow-hidden aspect-[4/3]">
-            <div class="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 animate-pulse"></div>
+          <!-- Loading placeholder -->
+          <div class="game-card rounded-2xl overflow-hidden aspect-[4/3]">
+            <div class="w-full h-full bg-gradient-to-br from-rp-overlay to-rp-surface animate-pulse"></div>
+          </div>
+          <div class="game-card rounded-2xl overflow-hidden aspect-[4/3]">
+            <div class="w-full h-full bg-gradient-to-br from-rp-overlay to-rp-surface animate-pulse"></div>
+          </div>
+          <div class="game-card rounded-2xl overflow-hidden aspect-[4/3]">
+            <div class="w-full h-full bg-gradient-to-br from-rp-overlay to-rp-surface animate-pulse"></div>
+          </div>
+          <div class="game-card rounded-2xl overflow-hidden aspect-[4/3]">
+            <div class="w-full h-full bg-gradient-to-br from-rp-overlay to-rp-surface animate-pulse"></div>
           </div>
         </div>
       </div>
     </div>
   </main>
 
-  <footer class="mt-20 px-1 pb-8">
+  <!-- Footer -->
+  <footer class="mt-20 px-4 pb-8">
     <div class="max-w-7xl mx-auto">
-      <h3 class="text-2xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">Browse Categories</h3>
+      <h3 class="text-2xl font-bold mb-4 gradient-text">Browse Categories</h3>
       <div class="relative flex items-center">
-        <button id="catCarouselPrev" class="absolute z-10 left-0 h-12 w-8 flex items-center justify-center rounded-l-lg bg-black/50 hover:bg-black/80 text-white text-xl transition disabled:opacity-30" aria-label="Previous" style="top: 6px;">
+        <button id="catCarouselPrev" class="absolute z-10 left-0 h-12 w-8 flex items-center justify-center rounded-l-lg bg-rp-surface/80 hover:bg-rp-surface text-rp-text text-xl transition border border-rp-overlay backdrop-blur-sm disabled:opacity-30" aria-label="Previous" style="top: 6px;">
           <i class='bx bx-chevron-left'></i>
         </button>
         <div id="categoriesCarousel" class="flex space-x-3 overflow-x-auto no-scrollbar px-10 py-1 scroll-smooth" style="scroll-behavior: smooth;"></div>
-        <button id="catCarouselNext" class="absolute z-10 right-0 h-12 w-8 flex items-center justify-center rounded-r-lg bg-black/50 hover:bg-black/80 text-white text-xl transition disabled:opacity-30" aria-label="Next" style="top: 6px;">
+        <button id="catCarouselNext" class="absolute z-10 right-0 h-12 w-8 flex items-center justify-center rounded-r-lg bg-rp-surface/80 hover:bg-rp-surface text-rp-text text-xl transition border border-rp-overlay backdrop-blur-sm disabled:opacity-30" aria-label="Next" style="top: 6px;">
           <i class='bx bx-chevron-right'></i>
         </button>
       </div>
     </div>
   </footer>
-    <script>
-      // Minimal ES6+ event delegation for inlined handlers
-const hamburger = document.getElementById("hamburger");
-const mobileMenu = document.getElementById("mobileMenu");
-const overlay = document.getElementById("overlay");
 
-const toggleMenu = () => {
-  const isActive = hamburger.classList.toggle("active");
-  if (isActive) {
-    hamburger.children[0].style.transform = "rotate(45deg) translateY(9px)";
-    hamburger.children[1].style.opacity = "0";
-    hamburger.children[2].style.transform = "rotate(-45deg) translateY(-9px)";
-    mobileMenu.style.right = "0";
-    overlay.classList.add("opacity-100", "visible");
-    overlay.classList.remove("opacity-0", "invisible");
-  } else {
-    hamburger.children[0].style.transform = "";
-    hamburger.children[1].style.opacity = "";
-    hamburger.children[2].style.transform = "";
-    mobileMenu.style.right = "-100%";
-    overlay.classList.remove("opacity-100", "visible");
-    overlay.classList.add("opacity-0", "invisible");
-  }
-};
-
-const closeMenu = () => {
-  if (hamburger.classList.contains("active")) {
-    hamburger.classList.remove("active");
-    hamburger.children[0].style.transform = "";
-    hamburger.children[1].style.opacity = "";
-    hamburger.children[2].style.transform = "";
-    mobileMenu.style.right = "-100%";
-    overlay.classList.remove("opacity-100", "visible");
-    overlay.classList.add("opacity-0", "invisible");
-  }
-};
-
-if (hamburger && mobileMenu && overlay) {
-  hamburger.addEventListener("click", toggleMenu);
-  overlay.addEventListener("click", closeMenu);
-}
-
-document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-  anchor.addEventListener("click", function (e) {
-    const targetId = this.getAttribute("href");
-    if (targetId.length > 1) {
-      // check if it's not just "#"
-      const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: "smooth" });
-      }
-    }
-  });
-});
-
-    </script>
   <script type="module">
-    
     import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove, onSnapshot, collection, getDocs, query, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
     import { signInAnonymously, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
@@ -339,6 +348,7 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         });
         allCategories = Array.from(catSet).sort();
         categoryCounts = counts;
+        renderCategoryButtons();
         renderFeaturedCarousel();
         renderGamesGrid();
         updateGameCount();
@@ -683,7 +693,20 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
         </div>
       `).join('');
     }
-
+    function renderCategoryButtons() {
+      const btns = document.getElementById('categoryButtons');
+      btns.innerHTML = `
+        <button class="category-btn active px-6 py-3 rounded-full border border-white/20 text-white font-semibold transition-all duration-300 hover:border-cyan-400/50" onclick="filterGames('all', event)">
+          All Games
+        </button>
+        ${allCategories.map(cat => `
+          <button class="category-btn px-6 py-3 rounded-full border border-white/20 text-white font-semibold transition-all duration-300 hover:border-cyan-400/50"
+            onclick="filterGames('${cat}', event)">
+            ${cat.charAt(0).toUpperCase() + cat.slice(1)} <span class="ml-1 text-cyan-400/80">(${categoryCounts[cat]})</span>
+          </button>
+        `).join('')}
+      `;
+    }
     function renderFeaturedCarousel() {
       const carousel = document.getElementById('featuredCarousel');
       const featuredGames = gamesData.filter(game => game.featured);
