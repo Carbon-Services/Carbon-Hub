@@ -1,156 +1,223 @@
-const defaults = {
-  openMode: "about:blank",
-  alwaysOpenBlank: false,
-  alwaysOpenBlob: false,
-  panicKeyType: "preset",
-  panicKey: "A",
-  presetKeys: [..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"],
-  cloakerType: "preset",
-  presetSites: [
-    { name: "Google", url: "https://google.com", icon: "https://google.com/favicon.ico" },
-    { name: "Canvas", url: "https://canvas.instructure.com", icon: "https://canvas.instructure.com/favicon.ico" },
-    { name: "Schoology", url: "https://schoology.com", icon: "https://schoology.com/favicon.ico" },
-  ],
-  cloakerPreset: JSON.stringify({ name: "Google", url: "https://google.com", icon: "https://google.com/favicon.ico" }),
-  cloakerCustomUrl: "",
-  cloakerCustomTitle: "",
-  cloakerCustomIcon: "",
-  antiTeacher: false,
-  hideElements: false,
-  enableBlur: false,
-  enableSoundAlert: false,
-  enableAutoHide: false,
-};
 
-function loadSettings() {
-  let s = {};
 
-  for (const key in defaults) {
-    const item = localStorage.getItem(`carbon.${key}`);
-    if (item === null) {
-      s[key] = defaults[key];
+const SETTINGS_VERSION = '1.1';
+
+function applySettings() {
+    if (!document.body || document.readyState !== 'complete') {
+        console.warn('document.body or DOM not ready, retrying settings application in 100ms');
+        setTimeout(applySettings, 100);
+        return;
+    }
+    console.log('Applying all settings');
+    applyBackground();
+    applyTabCloaking();
+    applyTeacherPrevention();
+    applyClosePrevention();
+    
+    if (window.parent && window.parent !== window) {
+        window.parent.postMessage({
+            type: 'carbon-settings-updated',
+            settings: {
+                panicKey: localStorage.getItem('carbon-panic-key') || null,
+                panicUrl: document.getElementById('panic-url')?.value || '',
+                background: localStorage.getItem('carbon-background') || 'default',
+                cloaking: {
+                    enabled: document.getElementById('tab-cloaking-enabled')?.checked || false,
+                    title: document.getElementById('cloak-title')?.value || '',
+                    favicon: document.getElementById('cloak-favicon')?.value || ''
+                }
+            }
+        }, '*');
+    }
+}
+
+function applyBackground() {
+    if (!document.body) {
+        console.warn('Cannot apply background: document.body is null');
+        return;
+    }
+    const customBg = localStorage.getItem('carbon-custom-bg');
+    const currentBackground = localStorage.getItem('carbon-background') || 'default';
+    const body = document.body;
+    
+    console.log('Applying background:', { customBg: !!customBg, currentBackground });
+    
+    // Reset existing styles
+    body.style.background = '';
+    body.style.color = '#e0def4';
+    
+    if (customBg) {
+        console.log('Applying custom background:', customBg.substring(0, 50) + '...');
+        body.style.background = `url(${customBg}) center/cover no-repeat`;
     } else {
-      try {
-        s[key] = JSON.parse(item);
-      } catch {
-        s[key] = item;
-      }
-    }
-  }
-  return s;
-}
-
-let settings = loadSettings();
-
-function saveSettings() {
-  for (const key in settings) {
-    if (key in defaults) {
-      localStorage.setItem(`carbon.${key}`, JSON.stringify(settings[key]));
-    }
-  }
-}
-
-const settingsItems = [
-  { key: "openMode", type: "radio", ids: ["openModeBlankBtn", "openModeBlobBtn"], values: ["about:blank", "blob"] },
-  { key: "alwaysOpenBlank", type: "switch", id: "alwaysOpenBlank", bgId: "alwaysOpenBlankBg", knobId: "alwaysOpenBlankKnob", color: "bg-cyan-500",
-    actions: [
-      { time: "pageLoad", fn: () => {
-let inFrame;
-
-try {
-  inFrame = window !== top;
-} catch (e) {
-  inFrame = true;
-}
-if (!localStorage.getItem("ab")) localStorage.setItem("ab", true);
-if (
-  !inFrame &&
-  !navigator.userAgent.includes("Firefox") &&
-  localStorage.getItem("ab") === "true"
-) {
-  const popup = open("about:blank", "_blank");
-  if (!popup || popup.closed) {
-    alert(
-      "Please allow popups for this site. Doing so will allow us to open the site in a about:blank tab and preventing this site from showing up in your history. You can turn this off in the site settings.",
-    );
-  } else {
-    const doc = popup.document;
-    const iframe = doc.createElement("iframe");
-    const style = iframe.style;
-    const link = doc.createElement("link");
-
-    const name = localStorage.getItem("name") || "My Drive - Google Drive";
-    const icon =
-      localStorage.getItem("icon") ||
-      "https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png";
-
-    doc.title = name;
-    link.rel = "icon";
-    link.href = icon;
-
-    iframe.src = location.href;
-    style.position = "fixed";
-    style.top = style.bottom = style.left = style.right = 0;
-    style.border = style.outline = "none";
-    style.width = style.height = "100%";
-
-    doc.head.appendChild(link);
-    doc.body.appendChild(iframe);
-
-    location.replace(localStorage.getItem("carbon.ab-link") || "https://classroom.google.com/h");
-
-    const script = doc.createElement("script");
-    script.textContent = `
-      window.onbeforeunload = function (event) {
-        const confirmationMessage = 'Leave Site?';
-        (event || window.event).returnValue = confirmationMessage;
-        return confirmationMessage;
-      };
-    `;
-    doc.head.appendChild(script);
-  }
-}
-        } 
-      },
-      { time: "change", fn: () => { console.log("alwaysOpenBlank toggled"); } }
-    ]
-  },
-  { key: "alwaysOpenBlob", type: "switch", id: "alwaysOpenBlob", bgId: "alwaysOpenBlobBg", knobId: "alwaysOpenBlobKnob", color: "bg-cyan-500" },
-  { key: "panicKeyType", type: "select", id: "panicKeyType" },
-  { key: "panicKey", type: "input", id: "panicKeyCustom" },
-  { key: "cloakerType", type: "select", id: "cloakerType" },
-  { key: "cloakerCustomUrl", type: "input", id: "cloakerCustomUrl" },
-  { key: "cloakerCustomTitle", type: "input", id: "cloakerCustomTitle" },
-  { key: "cloakerCustomIcon", type: "input", id: "cloakerCustomIcon" },
-  { key: "antiTeacher", type: "switch", id: "antiTeacher", bgId: "antiTeacherBg", knobId: "antiTeacherKnob", color: "bg-orange-500" },
-  { key: "enableBlur", type: "switch", id: "enableBlur", bgId: "enableBlurBg", knobId: "enableBlurKnob", color: "bg-green-500" },
-  { key: "enableSoundAlert", type: "switch", id: "enableSoundAlert", bgId: "enableSoundAlertBg", knobId: "enableSoundAlertKnob", color: "bg-green-500" },
-  { key: "enableAutoHide", type: "switch", id: "enableAutoHide", bgId: "enableAutoHideBg", knobId: "enableAutoHideKnob", color: "bg-green-500" },
-];
-
-function runActions(time, page) {
-  const currentPage = page || window.location.pathname.split("/").pop();
-  settingsItems.forEach(item => {
-    if (item.actions && Array.isArray(item.actions)) {
-      item.actions.forEach(action => {
-        if (action.time === time && settings[item.key]) {
-          if (!action.pages || action.pages.includes(currentPage)) {
-            action.fn();
-          }
+        console.log('Applying built-in background:', currentBackground);
+        switch (currentBackground) {
+            case 'black':
+                body.style.background = '#000000';
+                break;
+            case 'white':
+                body.style.background = '#ffffff';
+                body.style.color = '#000000';
+                break;
+            case 'mocha':
+                body.style.background = 'linear-gradient(135deg, #1e1e2e 0%, #313244 50%, #45475a 100%)';
+                break;
+            default:
+                body.style.background = 'linear-gradient(135deg, #191724 0%, #1f1d2e 50%, #26233a 100%)';
+                break;
         }
-      });
     }
-  });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  runActions("pageLoad");
+function applyTabCloaking() {
+    const enabled = document.getElementById('tab-cloaking-enabled')?.checked || false;
+    const title = document.getElementById('cloak-title')?.value || '';
+    const favicon = document.getElementById('cloak-favicon')?.value || '';
+    
+    if (enabled && title) {
+        document.title = title;
+        
+        if (favicon) {
+            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon';
+            link.rel = 'shortcut icon';
+            link.href = favicon;
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+    } else {
+        document.title = 'Settings - Carbon';
+    }
+}
 
-  const alwaysOpenBlankSwitch = document.getElementById("alwaysOpenBlank");
-  if (alwaysOpenBlankSwitch) {
-    alwaysOpenBlankSwitch.addEventListener("change", () => {
-      settings.alwaysOpenBlank = alwaysOpenBlankSwitch.checked;
-      runActions("change");
-    });
-  }
-});
+function applyTeacherPrevention() {
+    if (!document.body) {
+        console.warn('Cannot apply teacher prevention: document.body is null');
+        return;
+    }
+    if (document.getElementById('disable-right-click')?.checked) {
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    }
+    
+    if (document.getElementById('disable-select')?.checked) {
+        document.body.style.userSelect = 'none';
+        document.body.style.webkitUserSelect = 'none';
+        document.body.style.mozUserSelect = 'none';
+    }
+    
+    if (document.getElementById('hide-cursor')?.checked) {
+        let cursorTimer;
+        document.addEventListener('mousemove', () => {
+            document.body.style.cursor = 'default';
+            clearTimeout(cursorTimer);
+            cursorTimer = setTimeout(() => {
+                document.body.style.cursor = 'none';
+            }, 3000);
+        });
+    }
+    
+    if (document.getElementById('blur-on-unfocus')?.checked) {
+        window.addEventListener('blur', () => {
+            document.body.style.filter = 'blur(10px)';
+        });
+        window.addEventListener('focus', () => {
+            document.body.style.filter = 'none';
+        });
+    }
+}
+
+function applyClosePrevention() {
+    const enabled = document.getElementById('close-prevention-enabled')?.checked || false;
+    const confirm = document.getElementById('confirm-close')?.checked || false;
+    const message = document.getElementById('close-message')?.value || 'Are you sure you want to close Carbon?';
+    
+    if (enabled) {
+        window.addEventListener('beforeunload', (e) => {
+            if (confirm) {
+                e.preventDefault();
+                e.returnValue = message;
+                return message;
+            }
+        });
+    }
+}
+
+function initializeSettings() {
+    // Check settings version for migration
+    const savedVersion = localStorage.getItem('carbon-settings-version') || '1.0';
+    if (savedVersion !== SETTINGS_VERSION) {
+        localStorage.clear();
+        localStorage.setItem('carbon-settings-version', SETTINGS_VERSION);
+    }
+  
+            // Load panic key
+            const savedPanicKey = localStorage.getItem('carbon-panic-key');
+            if (savedPanicKey) {
+                panicKey = savedPanicKey;
+                document.getElementById('panic-key-display').textContent = panicKey.toUpperCase();
+            }
+            
+            // Load panic URL
+            const savedPanicUrl = localStorage.getItem('carbon-panic-url');
+            if (savedPanicUrl) {
+                document.getElementById('panic-url').value = savedPanicUrl;
+            }
+            
+            // Load background
+            const savedBg = localStorage.getItem('carbon-background');
+            if (savedBg) {
+                currentBackground = savedBg;
+                console.log('Loaded background from storage:', savedBg);
+                document.querySelectorAll('.bg-preview').forEach(el => el.classList.remove('active'));
+                const selectedPreview = document.querySelector(`[data-bg="${savedBg}"]`);
+                if (selectedPreview) {
+                    selectedPreview.classList.add('active');
+                } else {
+                    console.warn('No preview found for background:', savedBg);
+                    currentBackground = 'default';
+                    document.querySelector('[data-bg="default"]').classList.add('active');
+                }
+            }
+            
+            // Load custom background
+            const savedCustomBg = localStorage.getItem('carbon-custom-bg');
+            if (savedCustomBg) {
+                console.log('Loaded custom background from storage');
+                showCustomBgPreview(savedCustomBg);
+                currentBackground = 'custom';
+            }
+            
+            // Load tab cloaking
+            const cloakingEnabled = localStorage.getItem('carbon-cloak-enabled') === 'true';
+            document.getElementById('tab-cloaking-enabled').checked = cloakingEnabled;
+            document.getElementById('cloak-title').value = localStorage.getItem('carbon-cloak-title') || '';
+            document.getElementById('cloak-favicon').value = localStorage.getItem('carbon-cloak-favicon') || '';
+            toggleCloakingOptions();
+            
+            // Load fullscreen
+            const fullscreenEnabled = localStorage.getItem('carbon-fullscreen-enabled') === 'true';
+            document.getElementById('fullscreen-enabled').checked = fullscreenEnabled;
+            
+            // Load close prevention
+            document.getElementById('close-prevention-enabled').checked = localStorage.getItem('carbon-close-prevention') === 'true';
+            document.getElementById('confirm-close').checked = localStorage.getItem('carbon-confirm-close') === 'true';
+            document.getElementById('close-message').value = localStorage.getItem('carbon-close-message') || '';
+            
+            // Load teacher prevention
+            document.getElementById('disable-right-click').checked = localStorage.getItem('carbon-disable-right-click') === 'true';
+            document.getElementById('disable-devtools').checked = localStorage.getItem('carbon-disable-devtools') === 'true';
+            document.getElementById('disable-select').checked = localStorage.getItem('carbon-disable-select') === 'true';
+            document.getElementById('hide-cursor').checked = localStorage.getItem('carbon-hide-cursor') === 'true';
+            document.getElementById('blur-on-unfocus').checked = localStorage.getItem('carbon-blur-unfocus') === 'true';
+            
+            // Update status indicators
+            updateStatusIndicators();
+
+    applySettings();
+}
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSettings();
+            window.addEventListener('load', () => applySettings());
+        });

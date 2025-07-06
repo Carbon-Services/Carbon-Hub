@@ -1,30 +1,364 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <title>CARBON - Settings</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <title>Settings - Carbon</title>
+    <script defer async>
+        function setConfig() {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            display: ["Switzer", "Helvetica", "sans-serif"],
+                            inter: ["Inter", "sans-serif"],
+                        },
+                        colors: {
+                            base: "#191724",
+                            surface: "#1f1d2e",
+                            overlay: "#26233a",
+                            muted: "#6e6a86",
+                            subtle: "#908caa",
+                            text: "#e0def4",
+                            love: "#eb6f92",
+                            gold: "#f6c177",
+                            rose: "#ebbcba",
+                            pine: "#31748f",
+                            foam: "#9ccfd8",
+                            iris: "#c4a7e7",
+                            "highlight-low": "#21202e",
+                            "highlight-med": "#403d52",
+                            "highlight-high": "#524f67",
+                        },
+                    },
+                },
+            };
+        }
+    </script>
+    <script defer async src="https://cdn.tailwindcss.com" onload="setConfig()"></script>
     <script src="js/actions.js"></script>
-    <script defer src="js/settings.js"></script>
-    <script defer src="/js/hamburger.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --text-color: #e0def4;
+            --surface-color: #1f1d2e;
+            --overlay-color: #26233a;
+            --highlight-med: #403d52;
+            --highlight-high: #524f67;
+            --foam: #9ccfd8;
+            --love: #eb6f92;
+            --gold: #f6c177;
+            --pine: #31748f;
+            --iris: #c4a7e7;
+            --muted: #6e6a86;
+            --subtle: #908caa;
+        }
+        
+        .settings-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .setting-card {
+            background: var(--surface-color);
+            border: 1px solid var(--overlay-color);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .setting-card:hover {
+            border-color: var(--highlight-med);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .bg-preview {
+            width: 120px;
+            height: 80px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .bg-preview.active {
+            border-color: var(--foam);
+            box-shadow: 0 0 0 2px rgba(156, 207, 216, 0.3);
+        }
+        
+        .bg-preview:hover {
+            border-color: var(--muted);
+            transform: scale(1.05);
+        }
+        
+        .panic-key-display {
+            min-height: 4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: var(--overlay-color);
+            border-radius: 0.75rem;
+            color: var(--foam);
+            border: 2px solid var(--highlight-med);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .panic-key-display.recording {
+            border-color: var(--love);
+            background: var(--love);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        .panic-key-display.recording::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.8; }
+            100% { opacity: 1; }
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .image-upload {
+            border: 2px dashed var(--highlight-med);
+            border-radius: 0.75rem;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, var(--surface-color) 0%, var(--overlay-color) 100%);
+        }
+        
+        .image-upload:hover {
+            border-color: var(--foam);
+            background: var(--highlight-med);
+            transform: translateY(-2px);
+        }
+        
+        .image-upload.dragover {
+            border-color: var(--foam);
+            background: var(--highlight-med);
+            transform: scale(1.02);
+        }
+        
+        .custom-bg-preview {
+            width: 100%;
+            height: 200px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid var(--highlight-med);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .custom-bg-preview:hover {
+            border-color: var(--foam);
+            transform: scale(1.02);
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-item {
+            background: var(--highlight-med);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: var(--highlight-high);
+            transform: translateY(-2px);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--foam) 0%, var(--iris) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--foam) 0%, var(--pine) 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(156, 207, 216, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--love) 0%, #d63384 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px -5px rgba(235, 111, 146, 0.4);
+        }
+        
+        .input-field {
+            background: var(--overlay-color);
+            border: 1px solid var(--highlight-med);
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: var(--foam);
+            box-shadow: 0 0 0 3px rgba(156, 207, 216, 0.1);
+            outline: none;
+        }
+        
+        .checkbox-custom {
+            appearance: none;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid var(--highlight-med);
+            border-radius: 0.25rem;
+            background: var(--surface-color);
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .checkbox-custom:checked {
+            background: var(--foam);
+            border-color: var(--foam);
+        }
+        
+        .checkbox-custom:checked::before {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--surface-color);
+            font-weight: bold;
+            font-size: 0.8rem;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--foam);
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        .status-indicator.inactive {
+            background: var(--muted);
+            animation: none;
+        }
+        
+        .autosave-indicator {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--overlay-color);
+            border-radius: 0.5rem;
+            color: var(--text-color);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .autosave-indicator.saving {
+            opacity: 1;
+        }
+        
+        .autosave-indicator.saved {
+            opacity: 1;
+            background: var(--pine);
+        }
+    </style>
+    <script defer>
+      document.addEventListener("DOMContentLoaded", () => {
+      // Minimal ES6+ event delegation for inlined handlers
+const hamburger = document.getElementById("hamburger");
+const mobileMenu = document.getElementById("mobileMenu");
+const overlay = document.getElementById("overlay");
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body
-    class="bg-gradient-to-br from-[#0f0f23] via-[#1a1a2e] to-[#16213e] min-h-screen text-white overflow-x-hidden relative font-[Inter]"
-    id="settingsBody"
-  >
+const toggleMenu = () => {
+  const isActive = hamburger.classList.toggle("active");
+  if (isActive) {
+    hamburger.children[0].style.transform = "rotate(45deg) translateY(9px)";
+    hamburger.children[1].style.opacity = "0";
+    hamburger.children[2].style.transform = "rotate(-45deg) translateY(-9px)";
+    mobileMenu.style.right = "0";
+    overlay.classList.add("opacity-100", "visible");
+    overlay.classList.remove("opacity-0", "invisible");
+  } else {
+    hamburger.children[0].style.transform = "";
+    hamburger.children[1].style.opacity = "";
+    hamburger.children[2].style.transform = "";
+    mobileMenu.style.right = "-100%";
+    overlay.classList.remove("opacity-100", "visible");
+    overlay.classList.add("opacity-0", "invisible");
+  }
+};
+
+const closeMenu = () => {
+  if (hamburger.classList.contains("active")) {
+    hamburger.classList.remove("active");
+    hamburger.children[0].style.transform = "";
+    hamburger.children[1].style.opacity = "";
+    hamburger.children[2].style.transform = "";
+    mobileMenu.style.right = "-100%";
+    overlay.classList.remove("opacity-100", "visible");
+    overlay.classList.add("opacity-0", "invisible");
+  }
+};
+
+if (hamburger && mobileMenu && overlay) {
+  hamburger.addEventListener("click", toggleMenu);
+  overlay.addEventListener("click", closeMenu);
+}
+});
+    </script>
+</head>
+<body class="font-inter text-text min-h-screen">
     <nav
-      class="fixed top-0 left-0 right-0 z-[1000] flex justify-between items-center px-8 py-4 bg-[#0f0f23cc] border-b border-white/10 backdrop-blur-md animate-[slideDown_0.5s_ease-out]"
+      class="fixed top-0 left-0 right-0 z-[1000] flex justify-between items-center px-8 py-4 bg-[#0f0f23cc]/50 border-b border-white/10 animate-[slideDown_0.5s_ease-out]"
     >
       <div
         class="navbar-brand text-2xl md:text-3xl font-extrabold bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent tracking-tighter select-none"
@@ -75,408 +409,639 @@
     <div
       class="overlay fixed inset-0 bg-black bg-opacity-50 opacity-0 invisible transition-all duration-300 z-[998]"
       id="overlay"
-      onclick="toggleMenu()"
     ></div>
-
-    <main
-      class="flex items-center justify-center pt-32 pb-20 min-h-screen px-4"
-    >
-      <div
-        class="settings-card rounded-3xl shadow-2xl p-8 md:p-10 w-full max-w-4xl space-y-8 animate-[fadeInUp_1s_ease-out] relative overflow-hidden"
-      >
-        <div
-          class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-400/10 to-indigo-500/10 rounded-full blur-2xl"
-        ></div>
-        <div
-          class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-purple-400/10 to-cyan-400/10 rounded-full blur-2xl"
-        ></div>
-
-        <div class="relative z-10">
-          <h1
-            class="text-4xl md:text-5xl font-black mb-6 bg-gradient-to-r from-cyan-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent tracking-tighter drop-shadow-sm"
-          >
-            Settings
-          </h1>
-          <p class="text-lg text-white/70 font-medium mb-8">
-            Customize your CARBON experience
-          </p>
+    <div class="relative settings-container">
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold mb-2 text-text flex items-center gap-3">
+                <i class="bx bx-cog text-foam"></i>
+                <span class="gradient-text">Carbon Settings</span>
+            </h1>
+            <p class="text-muted text-lg">Customize your Carbon browser experience with advanced features</p>
         </div>
 
-        <section class="settings-section">
-          <div class="flex items-center gap-3 mb-6">
-            <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-indigo-500 flex items-center justify-center"
-            >
-              <i class="bx bx-window-open text-white text-lg"></i>
-            </div>
-            <label class="text-xl font-bold text-white">Open Mode</label>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <button
-              type="button"
-              id="openModeBlankBtn"
-              class="enhanced-button px-6 py-4 rounded-xl transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-2"
-            >
-              <i class="bx bx-tab"></i>
-              About:blank
-            </button>
-            <button
-              type="button"
-              id="openModeBlobBtn"
-              class="enhanced-button px-6 py-4 rounded-xl transition-all duration-300 font-semibold text-lg flex items-center justify-center gap-2"
-            >
-              <i class="bx bx-data"></i>
-              Blob
-            </button>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <label
-              class="flex items-center justify-between cursor-pointer text-white/80 p-3 rounded-lg hover:bg-white/5 transition-all duration-300"
-            >
-              <span class="font-medium">Always open in about:blank</span>
-              <div class="relative">
-                <input type="checkbox" class="sr-only" id="alwaysOpenBlank" />
-                <div class="w-12 h-7 rounded-full" id="alwaysOpenBlankBg"></div>
-                <div
-                  class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"
-                  id="alwaysOpenBlankKnob"
-                ></div>
-              </div>
-            </label>
-            <label
-              class="flex items-center justify-between cursor-pointer text-white/80 p-3 rounded-lg hover:bg-white/5 transition-all duration-300"
-            >
-              <span class="font-medium">Always open in blob</span>
-              <div class="relative">
-                <input type="checkbox" class="sr-only" id="alwaysOpenBlob" />
-                <div class="w-12 h-7 rounded-full" id="alwaysOpenBlobBg"></div>
-                <div
-                  class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"
-                  id="alwaysOpenBlobKnob"
-                ></div>
-              </div>
-            </label>
-          </div>
-          <button
-            class="enhanced-button bg-gradient-to-r from-cyan-500 to-indigo-500 text-black px-6 py-3 rounded-xl font-bold shadow-lg flex items-center gap-2"
-            id="testOpenModeBtn"
-          >
-            <i class="bx bx-play-circle"></i>Test Current Open Mode
-          </button>
-        </section>
+        <div id="autosave-indicator" class="autosave-indicator">
+            <i class='bx bx-save mr-2'></i><span id="autosave-text">Saving...</span>
+        </div>
 
-        <section class="settings-section">
-          <div class="flex items-center gap-3 mb-6">
-            <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center"
-            >
-              <i class="bx bx-error-alt text-white text-lg"></i>
+        <!-- Panic Key Settings -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-shield-alt-2 text-love"></i>
+                Panic Key
+                <span id="panic-status" class="status-indicator inactive"></span>
+            </h2>
+            <p class="text-muted mb-4">Set a panic key to quickly close Carbon and redirect to a safe page</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Current Panic Key</label>
+                    <div id="panic-key-display" class="panic-key-display">
+                        Press "Set Key" to configure
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Actions</label>
+                    <div class="flex gap-2">
+                        <button id="set-panic-key" class="px-4 py-2 btn-primary text-base rounded-lg font-medium transition-all">
+                            <i class="bx bx-key mr-2"></i>Set Key
+                        </button>
+                        <button id="clear-panic-key" class="px-4 py-2 btn-danger text-white rounded-lg font-medium transition-all">
+                            <i class="bx bx-trash mr-2"></i>Clear
+                        </button>
+                    </div>
+                </div>
             </div>
-            <label class="text-xl font-bold text-white">Panic Key</label>
-          </div>
-          <div
-            class="flex flex-col md:flex-row items-start md:items-center gap-4 mb-4"
-          >
-            <select
-              class="glass-effect border rounded-xl px-4 py-3 text-white font-medium min-w-[120px] bg-gray-800"
-              id="panicKeyType"
-            >
-              <option value="preset">A-Z Keys</option>
-              <option value="custom">Custom Key</option>
-            </select>
-            <select
-              class="glass-effect border rounded-xl px-4 py-3 text-white font-medium min-w-[80px] bg-gray-800"
-              id="panicKeyPreset"
-            ></select>
-            <input
-              type="text"
-              maxlength="1"
-              class="glass-effect border rounded-xl px-4 py-3 w-20 text-center text-white font-medium bg-gray-800"
-              id="panicKeyCustom"
-              placeholder="Key"
-              style="display: none"
-            />
-          </div>
-          <div
-            class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-4"
-          >
-            <p class="text-yellow-200 font-medium flex items-center gap-2">
-              <i class="bx bx-info-circle"></i>
-              Press
-              <kbd
-                class="bg-yellow-500/20 px-2 py-1 rounded-lg border border-yellow-500/40 font-bold"
-                id="panicKeyDisplay"
-              ></kbd>
-              to activate panic mode
-            </p>
-          </div>
-          <button
-            class="enhanced-button bg-gradient-to-r from-red-500 to-pink-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg flex items-center gap-2"
-            id="testPanicKeyBtn"
-          >
-            <i class="bx bx-zap"></i>Test Panic Key
-          </button>
-        </section>
+            
+            <div class="mt-4">
+                <label class="block text-sm font-medium mb-2">Panic Redirect URL</label>
+                <input type="url" id="panic-url" placeholder="https://classroom.google.com" 
+                       class="input-field w-full px-3 py-2 rounded-lg">
+            </div>
+        </div>
 
-        <section class="settings-section">
-          <div class="flex items-center gap-3 mb-6">
-            <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center"
-            >
-              <i class="bx bx-mask text-white text-lg"></i>
+        <!-- Background Settings -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-palette text-iris"></i>
+                Background & Theme
+            </h2>
+            <p class="text-muted mb-4">Choose your preferred background and theme</p>
+            
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-3">Built-in Backgrounds</label>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="bg-preview active" data-bg="default" style="background: linear-gradient(135deg, #191724 0%, #1f1d2e 50%, #26233a 100%);">
+                        <div class="text-center text-xs p-2 text-text">Default</div>
+                    </div>
+                    <div class="bg-preview" data-bg="black" style="background: #000000;">
+                        <div class="text-center text-xs p-2 text-white">Black</div>
+                    </div>
+                    <div class="bg-preview" data-bg="white" style="background: #ffffff;">
+                        <div class="text-center text-xs p-2 text-black">White</div>
+                    </div>
+                    <div class="bg-preview" data-bg="mocha" style="background: linear-gradient(135deg, #1e1e2e 0%, #313244 50%, #45475a 100%);">
+                        <div class="text-center text-xs p-2 text-white">Mocha</div>
+                    </div>
+                </div>
             </div>
-            <label class="text-xl font-bold text-white">Tab Cloaker</label>
-          </div>
-          <div class="mb-4">
-            <select
-              class="glass-effect border rounded-xl px-4 py-3 w-full md:w-auto text-white font-medium bg-gray-800"
-              id="cloakerType"
-            >
-              <option value="preset">Pre-selected site</option>
-              <option value="custom">Custom site</option>
-            </select>
-          </div>
-          <select
-            class="glass-effect border rounded-xl px-4 py-3 w-full mb-4 text-white font-medium bg-gray-800"
-            id="cloakerPreset"
-          ></select>
-          <div
-            class="grid grid-cols-1 gap-4 mb-4"
-            id="cloakerCustomFields"
-            style="display: none"
-          >
-            <input
-              type="url"
-              class="glass-effect border rounded-xl px-4 py-3 text-white font-medium bg-gray-800"
-              id="cloakerCustomakeURLrl"
-              placeholder="Site URL (https://example.com)"
-            />
-            <input
-              type="text"
-              class="glass-effect border rounded-xl px-4 py-3 text-white font-medium bg-gray-800"
-              id="cloakerCustomTitle"
-              placeholder="Custom Title"
-            />
-            <input
-              type="url"
-              class="glass-effect border rounded-xl px-4 py-3 text-white font-medium bg-gray-800"
-              id="cloakerCustomIcon"
-              placeholder="Favicon URL"
-            />
-          </div>
-          <div class="flex flex-col md:flex-row gap-4">
-            <button
-              class="enhanced-button bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-xl font-bold shadow-lg flex items-center gap-2 flex-1"
-              id="applyCloakerBtn"
-            >
-              <i class="bx bx-palette"></i>Apply Tab Cloaker
-            </button>
-            <button
-              class="enhanced-button bg-gradient-to-r from-gray-600 to-gray-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg flex items-center gap-2 flex-1"
-              id="removeCloakerBtn"
-            >
-              <i class="bx bx-eraser"></i>Remove Cloaker
-            </button>
-          </div>
-        </section>
 
-        <section class="settings-section">
-          <div class="flex items-center gap-3 mb-6">
-            <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center"
-            >
-              <i class="bx bx-shield-alt-2 text-white text-lg"></i>
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-3">Custom Background Image</label>
+                <div class="image-upload" id="bg-upload">
+                    <i class="bx bx-cloud-upload text-3xl text-muted mb-2"></i>
+                    <p class="text-muted">Click to upload or drag and drop an image</p>
+                    <p class="text-xs text-subtle mt-1">Supports JPG, PNG, WebP (Max 2MB)</p>
+                </div>
+                <input type="file" id="bg-file-input" accept="image/*" style="display: none;">
+                
+                <div id="custom-bg-preview" class="mt-4 hidden">
+                    <div class="custom-bg-preview" id="bg-preview-image"></div>
+                    <div class="flex gap-2 mt-2">
+                        <button id="remove-bg" class="px-3 py-1 bg-love hover:bg-love/80 text-white rounded text-sm">
+                            Remove
+                        </button>
+                        <button id="change-bg" class="px-3 py-1 bg-foam hover:bg-foam/80 text-base rounded text-sm">
+                            Change
+                        </button>
+                    </div>
+                </div>
             </div>
-            <label class="text-xl font-bold text-white"
-              >Anti-Teacher Prevention</label
-            >
-          </div>
-          <label
-            class="flex items-center justify-between cursor-pointer text-white/80 p-4 rounded-xl hover:bg-white/5 transition-all duration-300 mb-4"
-          >
-            <span class="font-medium text-lg"
-              >Enable Anti-Teacher Prevention</span
-            >
-            <div class="relative">
-              <input type="checkbox" class="sr-only" id="antiTeacher" />
-              <div class="w-12 h-7 rounded-full" id="antiTeacherBg"></div>
-              <div
-                class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"
-                id="antiTeacherKnob"
-              ></div>
-            </div>
-          </label>
-          <p class="text-white/60 mb-4 font-medium">
-            Hides page elements and disables interactions when enabled
-          </p>
-          <div
-            class="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 border border-yellow-500/40 rounded-xl p-6"
-            id="antiTeacherActive"
-            style="display: none"
-          >
-            <div class="flex items-center gap-3 mb-2">
-              <i class="bx bx-check-shield text-yellow-300 text-xl"></i>
-              <p class="font-bold text-yellow-200 text-lg">
-                Anti-Teacher Mode Active
-              </p>
-            </div>
-            <p class="text-yellow-200/80 font-medium">
-              Page elements will be hidden when teacher approaches. Press
-              <kbd
-                class="bg-yellow-300/30 px-2 py-1 rounded-lg border border-yellow-500/30 text-yellow-200 font-bold"
-                id="panicKeyDisplay2"
-              ></kbd>
-              to toggle.
-            </p>
-          </div>
-        </section>
+        </div>
 
-        <section class="settings-section">
-          <div class="flex items-center gap-3 mb-6">
-            <div
-              class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-teal-500 flex items-center justify-center"
-            >
-              <i class="bx bx-cog text-white text-lg"></i>
+        <!-- Tab Cloaking -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-mask text-gold"></i>
+                Tab Cloaking
+            </h2>
+            <p class="text-muted mb-4">Disguise your tab title and favicon to avoid detection</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="tab-cloaking-enabled" class="checkbox-custom">
+                    <span>Enable Tab Cloaking</span>
+                </label>
             </div>
-            <label class="text-xl font-bold text-white"
-              >Additional Features</label
-            >
-          </div>
-          <div class="grid grid-cols-1 gap-4">
-            <label
-              class="flex items-center justify-between cursor-pointer text-white/80 p-4 rounded-xl hover:bg-white/5 transition-all duration-300"
-            >
-              <div class="mr-4">
-                <span class="font-semibold text-lg text-white"
-                  >Blur content when unfocused</span
-                >
-                <p class="text-sm text-white/60 mt-1">
-                  Blurs the page content when the tab loses focus
-                </p>
-              </div>
-              <div class="relative flex-shrink-0">
-                <input type="checkbox" class="sr-only" id="enableBlur" />
-                <div class="w-12 h-7 rounded-full" id="enableBlurBg"></div>
-                <div
-                  class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"
-                  id="enableBlurKnob"
-                ></div>
-              </div>
-            </label>
-            <label
-              class="flex items-center justify-between cursor-pointer text-white/80 p-4 rounded-xl hover:bg-white/5 transition-all duration-300"
-            >
-              <div class="mr-4">
-                <span class="font-semibold text-lg text-white"
-                  >Sound alert on tab switch</span
-                >
-                <p class="text-sm text-white/60 mt-1">
-                  Plays a sound when switching away from the tab
-                </p>
-              </div>
-              <div class="relative flex-shrink-0">
-                <input type="checkbox" class="sr-only" id="enableSoundAlert" />
-                <div
-                  class="w-12 h-7 rounded-full"
-                  id="enableSoundAlertBg"
-                ></div>
-                <div
-                  class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"
-                  id="enableSoundAlertKnob"
-                ></div>
-              </div>
-            </label>
-            <label
-              class="flex items-center justify-between cursor-pointer text-white/80 p-4 rounded-xl hover:bg-white/5 transition-all duration-300"
-            >
-              <div class="mr-4">
-                <span class="font-semibold text-lg text-white"
-                  >Auto-hide after inactivity</span
-                >
-                <p class="text-sm text-white/60 mt-1">
-                  Automatically hides content after 5 minutes of inactivity
-                </p>
-              </div>
-              <div class="relative flex-shrink-0">
-                <input type="checkbox" class="sr-only" id="enableAutoHide" />
-                <div class="w-12 h-7 rounded-full" id="enableAutoHideBg"></div>
-                <div
-                  class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full transition-transform"
-                  id="enableAutoHideKnob"
-                ></div>
-              </div>
-            </label>
-          </div>
-        </section>
+            
+            <div id="cloaking-options" class="space-y-4 opacity-50">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Fake Title</label>
+                        <input type="text" id="cloak-title" placeholder="Google Classroom" 
+                               class="input-field w-full px-3 py-2 rounded-lg">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Fake Favicon URL</label>
+                        <input type="url" id="cloak-favicon" placeholder="https://classroom.google.com/favicon.ico" 
+                               class="input-field w-full px-3 py-2 rounded-lg">
+                    </div>
+                </div>
+                
+                <div class="bg-highlight-med p-4 rounded-lg">
+                    <h4 class="font-medium mb-2">Quick Presets</h4>
+                    <div class="flex gap-2 flex-wrap">
+                        <button class="cloak-preset px-3 py-1 bg-foam hover:bg-foam/80 text-base rounded text-sm" 
+                                data-title="Google Classroom" data-favicon="https://classroom.google.com/favicon.ico">
+                            Google Classroom
+                        </button>
+                        <button class="cloak-preset px-3 py-1 bg-foam hover:bg-foam/80 text-base rounded text-sm" 
+                                data-title="Google Docs" data-favicon="https://docs.google.com/favicon.ico">
+                            Google Docs
+                        </button>
+                        <button class="cloak-preset px-3 py-1 bg-foam hover:bg-foam/80 text-base rounded text-sm" 
+                                data-title="Khan Academy" data-favicon="https://www.khanacademy.org/favicon.ico">
+                            Khan Academy
+                        </button>
+                        <button class="cloak-preset px-3 py-1 bg-foam hover:bg-foam/80 text-base rounded text-sm" 
+                                data-title="Schoology" data-favicon="https://www.schoology.com/favicon.ico">
+                            Schoology
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <section class="status-card rounded-2xl p-6">
-          <div class="flex items-center gap-3 mb-4">
-            <div
-              class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-indigo-400 flex items-center justify-center"
-            >
-              <i class="bx bx-info-circle text-white"></i>
+        <!-- Fullscreen Controls -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-fullscreen text-pine"></i>
+                Fullscreen Controls
+            </h2>
+            <p class="text-muted mb-4">Enable fullscreen mode and configure behavior</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="fullscreen-enabled" class="checkbox-custom">
+                    <span>Enable Fullscreen Button</span>
+                </label>
             </div>
-            <h3 class="font-bold text-xl text-white">Current Status</h3>
-          </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div
-              class="flex justify-between items-center p-3 bg-white/5 rounded-lg"
-            >
-              <span class="text-white/70 font-medium">Open Mode:</span>
-              <span
-                class="font-bold bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent"
-                id="statusOpenMode"
-              ></span>
+            
+            <div class="flex gap-2">
+                <button id="enter-fullscreen" class="px-4 py-2 bg-pine hover:bg-pine/80 text-white rounded-lg font-medium transition-all">
+                    Enter Fullscreen
+                </button>
+                <button id="exit-fullscreen" class="px-4 py-2 bg-love hover:bg-love/80 text-white rounded-lg font-medium transition-all">
+                    Exit Fullscreen
+                </button>
             </div>
-            <div
-              class="flex justify-between items-center p-3 bg-white/5 rounded-lg"
-            >
-              <span class="text-white/70 font-medium">Panic Key:</span>
-              <span
-                class="font-bold bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent"
-                id="statusPanicKey"
-              ></span>
-            </div>
-            <div
-              class="flex justify-between items-center p-3 bg-white/5 rounded-lg"
-            >
-              <span class="text-white/70 font-medium">Tab Cloaker:</span>
-              <span
-                class="font-bold bg-gradient-to-r from-cyan-400 to-indigo-400 bg-clip-text text-transparent"
-                id="statusCloaker"
-              ></span>
-            </div>
-            <div
-              class="flex justify-between items-center p-3 bg-white/5 rounded-lg"
-            >
-              <span class="text-white/70 font-medium">Anti-Teacher:</span>
-              <span class="font-bold" id="statusAntiTeacher"></span>
-            </div>
-          </div>
-        </section>
+        </div>
 
-        <div
-          class="flex flex-col md:flex-row items-center justify-between gap-4 pt-4"
-        ></div>
-      </div>
+        <!-- Close Prevention -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-shield-x text-love"></i>
+                Close Prevention
+            </h2>
+            <p class="text-muted mb-4">Prevent accidental closing of Carbon</p>
+            
+            <div class="space-y-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="close-prevention-enabled" class="checkbox-custom">
+                    <span>Enable Close Prevention</span>
+                </label>
+                
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="confirm-close" class="checkbox-custom">
+                    <span>Show confirmation dialog before closing</span>
+                </label>
+                
+                <div>
+                    <label class="block text-sm font-medium mb-2">Custom Close Message</label>
+                    <input type="text" id="close-message" placeholder="Are you sure you want to close Carbon?" 
+                           class="input-field w-full px-3 py-2 rounded-lg">
+                </div>
+            </div>
+        </div>
 
-      <div
-        class="fixed inset-0 bg-gradient-to-br from-[#0f0f23] to-[#1a1a2e] flex items-center justify-center z-50"
-        id="hideElementsOverlay"
-        style="display: none"
-      >
+        <!-- Teacher Prevention -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-user-x text-gold"></i>
+                Teacher Prevention
+            </h2>
+            <p class="text-muted mb-4">Advanced privacy and stealth features</p>
+            
+            <div class="space-y-4">
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="disable-right-click" class="checkbox-custom">
+                    <span>Disable right-click menu</span>
+                </label>
+                
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="disable-devtools" class="checkbox-custom">
+                    <span>Disable developer tools shortcuts</span>
+                </label>
+                
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="disable-select" class="checkbox-custom">
+                    <span>Disable text selection</span>
+                </label>
+                
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="hide-cursor" class="checkbox-custom">
+                    <span>Hide cursor when idle</span>
+                </label>
+                
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" id="blur-on-unfocus" class="checkbox-custom">
+                    <span>Blur screen when window loses focus</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <div class="setting-card">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i class="bx bx-link text-foam"></i>
+                Quick Links
+            </h2>
+            <p class="text-muted mb-4">Access other Carbon features</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <a href="carbon://ai" class="flex items-center gap-3 p-3 bg-highlight-med hover:bg-highlight-high rounded-lg transition-all">
+                    <i class="bx bx-brain text-iris"></i>
+                    <span>AI Assistant</span>
+                </a>
+                <a href="carbon://games" class="flex items-center gap-3 p-3 bg-highlight-med hover:bg-highlight-high rounded-lg transition-all">
+                    <i class="bx bx-joystick text-foam"></i>
+                    <span>Games</span>
+                </a>
+                <a href="carbon://newtab" class="flex items-center gap-3 p-3 bg-highlight-med hover:bg-highlight-high rounded-lg transition-all">
+                    <i class="bx bx-home text-gold"></i>
+                    <span>New Tab</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Clear Settings -->
         <div class="text-center">
-          <div
-            class="animate-spin rounded-full h-32 w-32 border-4 border-cyan-400/20 border-t-cyan-400 mx-auto mb-8"
-          ></div>
-          <div class="space-y-2">
-            <p class="text-cyan-300 text-2xl font-bold">Loading...</p>
-            <p class="text-cyan-300/60 text-lg">
-              Please wait while we load your content
-            </p>
-          </div>
+            <button id="clear-settings" class="px-8 py-4 btn-danger text-white rounded-lg font-medium transition-all text-lg">
+                <i class="bx bx-trash mr-2"></i>
+                Clear All Settings
+            </button>
         </div>
-      </div>
-    </main>
-  </body>
+    </div>
+
+    <script>
+        let panicKey = null;
+        let isRecordingPanicKey = false;
+        let currentBackground = 'default';
+        let isSaving = false;
+        let autosaveTimeout = null;
+
+        // Load settings on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSettings();
+            setupAutosave();
+        });
+
+        // Settings management
+        function loadSettings() {
+            // Load panic key
+            const savedPanicKey = localStorage.getItem('carbon-panic-key');
+            if (savedPanicKey) {
+                panicKey = savedPanicKey;
+                document.getElementById('panic-key-display').textContent = panicKey.toUpperCase();
+            }
+            
+            // Load panic URL
+            const savedPanicUrl = localStorage.getItem('carbon-panic-url');
+            if (savedPanicUrl) {
+                document.getElementById('panic-url').value = savedPanicUrl;
+            }
+            
+            // Load background
+            const savedBg = localStorage.getItem('carbon-background');
+            if (savedBg) {
+                currentBackground = savedBg;
+                console.log('Loaded background from storage:', savedBg);
+                document.querySelectorAll('.bg-preview').forEach(el => el.classList.remove('active'));
+                const selectedPreview = document.querySelector(`[data-bg="${savedBg}"]`);
+                if (selectedPreview) {
+                    selectedPreview.classList.add('active');
+                } else {
+                    console.warn('No preview found for background:', savedBg);
+                    currentBackground = 'default';
+                    document.querySelector('[data-bg="default"]').classList.add('active');
+                }
+            }
+            
+            // Load custom background
+            const savedCustomBg = localStorage.getItem('carbon-custom-bg');
+            if (savedCustomBg) {
+                console.log('Loaded custom background from storage');
+                showCustomBgPreview(savedCustomBg);
+                currentBackground = 'custom';
+            }
+            
+            // Load tab cloaking
+            const cloakingEnabled = localStorage.getItem('carbon-cloak-enabled') === 'true';
+            document.getElementById('tab-cloaking-enabled').checked = cloakingEnabled;
+            document.getElementById('cloak-title').value = localStorage.getItem('carbon-cloak-title') || '';
+            document.getElementById('cloak-favicon').value = localStorage.getItem('carbon-cloak-favicon') || '';
+            toggleCloakingOptions();
+            
+            // Load fullscreen
+            const fullscreenEnabled = localStorage.getItem('carbon-fullscreen-enabled') === 'true';
+            document.getElementById('fullscreen-enabled').checked = fullscreenEnabled;
+            
+            // Load close prevention
+            document.getElementById('close-prevention-enabled').checked = localStorage.getItem('carbon-close-prevention') === 'true';
+            document.getElementById('confirm-close').checked = localStorage.getItem('carbon-confirm-close') === 'true';
+            document.getElementById('close-message').value = localStorage.getItem('carbon-close-message') || '';
+            
+            // Load teacher prevention
+            document.getElementById('disable-right-click').checked = localStorage.getItem('carbon-disable-right-click') === 'true';
+            document.getElementById('disable-devtools').checked = localStorage.getItem('carbon-disable-devtools') === 'true';
+            document.getElementById('disable-select').checked = localStorage.getItem('carbon-disable-select') === 'true';
+            document.getElementById('hide-cursor').checked = localStorage.getItem('carbon-hide-cursor') === 'true';
+            document.getElementById('blur-on-unfocus').checked = localStorage.getItem('carbon-blur-unfocus') === 'true';
+            
+            // Update status indicators
+            updateStatusIndicators();
+        }
+
+        function saveSettings() {
+            if (isSaving) return;
+            isSaving = true;
+            showAutosaveIndicator('saving');
+
+            try {
+                // Validate panic URL
+                const panicUrl = document.getElementById('panic-url').value;
+                if (panicUrl && !/^https?:\/\/[^\s$.?#].[^\s]*$/.test(panicUrl)) {
+                    alert('Please enter a valid URL for Panic Redirect');
+                    isSaving = false;
+                    showAutosaveIndicator('error');
+                    return;
+                }
+
+                // Save all settings
+                localStorage.setItem('carbon-panic-key', panicKey || '');
+                localStorage.setItem('carbon-panic-url', panicUrl);
+                localStorage.setItem('carbon-background', currentBackground);
+                localStorage.setItem('carbon-cloak-enabled', document.getElementById('tab-cloaking-enabled').checked);
+                localStorage.setItem('carbon-cloak-title', document.getElementById('cloak-title').value);
+                localStorage.setItem('carbon-cloak-favicon', document.getElementById('cloak-favicon').value);
+                localStorage.setItem('carbon-fullscreen-enabled', document.getElementById('fullscreen-enabled').checked);
+                localStorage.setItem('carbon-close-prevention', document.getElementById('close-prevention-enabled').checked);
+                localStorage.setItem('carbon-confirm-close', document.getElementById('confirm-close').checked);
+                localStorage.setItem('carbon-close-message', document.getElementById('close-message').value);
+                localStorage.setItem('carbon-disable-right-click', document.getElementById('disable-right-click').checked);
+                localStorage.setItem('carbon-disable-devtools', document.getElementById('disable-devtools').checked);
+                localStorage.setItem('carbon-disable-select', document.getElementById('disable-select').checked);
+                localStorage.setItem('carbon-hide-cursor', document.getElementById('hide-cursor').checked);
+                localStorage.setItem('carbon-blur-unfocus', document.getElementById('blur-on-unfocus').checked);
+
+                console.log('Saved background to storage:', currentBackground);
+                
+                applySettings();
+                
+                // Show saved message
+                showAutosaveIndicator('saved');
+                setTimeout(() => {
+                    hideAutosaveIndicator();
+                    isSaving = false;
+                }, 2000);
+            } catch (e) {
+                if (e.name === 'QuotaExceededError') {
+                    alert('Storage limit exceeded. Please remove the custom background or clear some settings.');
+                    showAutosaveIndicator('error');
+                } else {
+                    console.error('Error saving settings:', e);
+                    showAutosaveIndicator('error');
+                }
+                isSaving = false;
+            }
+        }
+
+        function showAutosaveIndicator(state) {
+            const indicator = document.getElementById('autosave-indicator');
+            const text = document.getElementById('autosave-text');
+            
+            indicator.classList.remove('saving', 'saved');
+            if (state === 'saving') {
+                indicator.classList.add('saving');
+                text.textContent = 'Saving...';
+            } else if (state === 'saved') {
+                indicator.classList.add('saved');
+                text.textContent = 'Saved!';
+            } else if (state === 'error') {
+                indicator.classList.add('saving');
+                text.textContent = 'Error saving';
+            }
+        }
+
+        function hideAutosaveIndicator() {
+            document.getElementById('autosave-indicator').classList.remove('saving', 'saved');
+        }
+
+        function debounce(func, wait) {
+            return function executedFunction(...args) {
+                clearTimeout(autosaveTimeout);
+                autosaveTimeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        const debouncedSave = debounce(saveSettings, 1000);
+        const debouncedToggleSave = debounce(saveSettings, 300); // Faster debounce for toggles
+
+        function setupAutosave() {
+            // Add event listeners for inputs
+            const textInputs = document.querySelectorAll('input[type="text"], input[type="url"]');
+            const checkboxInputs = document.querySelectorAll('input[type="checkbox"]');
+
+            textInputs.forEach(input => {
+                input.addEventListener('change', debouncedSave);
+                input.addEventListener('input', debouncedSave);
+            });
+
+            checkboxInputs.forEach(input => {
+                input.addEventListener('change', debouncedToggleSave);
+            });
+
+            // Background selection
+            document.querySelectorAll('.bg-preview').forEach(preview => {
+                preview.addEventListener('click', function() {
+                    document.querySelectorAll('.bg-preview').forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    currentBackground = this.dataset.bg;
+                    console.log('Selected background:', currentBackground);
+                    localStorage.removeItem('carbon-custom-bg');
+                    document.getElementById('custom-bg-preview').classList.add('hidden');
+                    applySettings();
+                    debouncedSave();
+                });
+            });
+
+            // Custom background upload
+            document.getElementById('bg-file-input').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file && file.size > 2 * 1024 * 1024) {
+                    alert('Image size is too large. Please choose an image smaller than 2MB.');
+                    e.target.value = '';
+                    return;
+                }
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const dataUrl = e.target.result;
+                        try {
+                            localStorage.setItem('carbon-custom-bg', dataUrl);
+                            console.log('Uploaded custom background');
+                            showCustomBgPreview(dataUrl);
+                            currentBackground = 'custom';
+                            document.querySelectorAll('.bg-preview').forEach(el => el.classList.remove('active'));
+                            applySettings();
+                            debouncedSave();
+                        } catch (e) {
+                            if (e.name === 'QuotaExceededError') {
+                                alert('Storage limit exceeded. Please choose a smaller image.');
+                            } else {
+                                console.error('Error uploading background:', e);
+                            }
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Remove custom background
+            document.getElementById('remove-bg').addEventListener('click', function() {
+                localStorage.removeItem('carbon-custom-bg');
+                document.getElementById('custom-bg-preview').classList.add('hidden');
+                currentBackground = 'default';
+                console.log('Removed custom background, reverted to:', currentBackground);
+                document.querySelectorAll('.bg-preview').forEach(el => el.classList.remove('active'));
+                document.querySelector('[data-bg="default"]').classList.add('active');
+                applySettings();
+                debouncedSave();
+            });
+
+            // Panic key
+            document.getElementById('set-panic-key').addEventListener('click', function(e) {
+                if (isRecordingPanicKey) return;
+                
+                isRecordingPanicKey = true;
+                const display = document.getElementById('panic-key-display');
+                display.textContent = 'Press any key...';
+                display.classList.add('recording');
+                
+                function recordKey(e) {
+                    e.preventDefault();
+                    panicKey = e.key.toLowerCase();
+                    display.textContent = panicKey.toUpperCase();
+                    display.classList.remove('recording');
+                    isRecordingPanicKey = false;
+                    document.removeEventListener('keydown', recordKey);
+                    updateStatusIndicators();
+                    debouncedSave();
+                }
+                
+                document.addEventListener('keydown', recordKey);
+            });
+
+            document.getElementById('clear-panic-key').addEventListener('click', function() {
+                panicKey = null;
+                document.getElementById('panic-key-display').textContent = 'Press "Set Key" to configure';
+                updateStatusIndicators();
+                debouncedSave();
+            });
+
+            // Cloaking presets
+            document.querySelectorAll('.cloak-preset').forEach(preset => {
+                preset.addEventListener('click', function() {
+                    document.getElementById('cloak-title').value = this.dataset.title;
+                    document.getElementById('cloak-favicon').value = this.dataset.favicon;
+                    applySettings();
+                    debouncedSave();
+                });
+            });
+        }
+
+        function updateStatusIndicators() {
+            const panicStatus = document.getElementById('panic-status');
+            if (panicKey) {
+                panicStatus.classList.remove('inactive');
+                panicStatus.classList.add('active');
+            } else {
+                panicStatus.classList.add('inactive');
+                panicStatus.classList.remove('active');
+            }
+        }
+
+        function showCustomBgPreview(dataUrl) {
+            const preview = document.getElementById('custom-bg-preview');
+            const image = document.getElementById('bg-preview-image');
+            image.style.backgroundImage = `url(${dataUrl})`;
+            preview.classList.remove('hidden');
+        }
+
+        // Panic key functionality
+        document.getElementById('bg-upload').addEventListener('click', () => {
+            document.getElementById('bg-file-input').click();
+        });
+
+        document.getElementById('change-bg').addEventListener('click', () => {
+            document.getElementById('bg-file-input').click();
+        });
+
+        // Tab cloaking
+        document.getElementById('tab-cloaking-enabled').addEventListener('change', function() {
+            toggleCloakingOptions();
+            applySettings();
+            debouncedToggleSave();
+        });
+
+        function toggleCloakingOptions() {
+            const enabled = document.getElementById('tab-cloaking-enabled').checked;
+            const options = document.getElementById('cloaking-options');
+            options.style.opacity = enabled ? '1' : '0.5';
+            options.style.pointerEvents = enabled ? 'auto' : 'none';
+        }
+
+        // Fullscreen controls
+        document.getElementById('enter-fullscreen').addEventListener('click', function() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            }
+        });
+
+        document.getElementById('exit-fullscreen').addEventListener('click', function() {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+        });
+
+        // Clear all settings
+        document.getElementById('clear-settings').addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear all settings? This will reset all preferences to default.')) {
+                localStorage.clear();
+                location.reload();
+            }
+        });
+
+        // Global panic key listener
+        document.addEventListener('keydown', function(e) {
+            if (panicKey && e.key.toLowerCase() === panicKey) {
+                const panicUrl = document.getElementById('panic-url').value || 'https://classroom.google.com';
+                window.location.href = panicUrl;
+            }
+        });
+
+        // Disable dev tools shortcuts if enabled
+        document.addEventListener('keydown', function(e) {
+            if (document.getElementById('disable-devtools').checked) {
+                if (e.key === 'F12' || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') || 
+                    (e.ctrlKey && e.key === 'U')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+    </script>
+
+</body>
 </html>
