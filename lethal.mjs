@@ -6,29 +6,25 @@
 
     await import("./uv.config.js")
 
-await import("/scram/scramjet.shared.js")
-await import("/scram/scramjet.controller.js")
+const { ScramjetController } = window.$scramjetLoadController();
 
 const scramjet = new ScramjetController({
   files: {
     wasm: "/scram/scramjet.wasm.wasm",
-    worker: "/scram/scramjet.worker.js",
-    client: "/scram/scramjet.client.js",
-    shared: "/scram/scramjet.shared.js",
+    all: "/scram/scramjet.all.js",
     sync: "/scram/scramjet.sync.js",
   },
   flags: {
-    serviceworkers: false,
-    syncxhr: false,
-    naiiveRewriter: false,
-    strictRewrites: true,
     rewriterLogs: false,
-    captureErrors: true,
-    cleanErrors: true,
+    naiiveRewriter: false,
     scramitize: false,
-    sourcemaps: true,
   },
-})
+  siteFlags: {
+    "https://www.google.com/(search|sorry).*": {
+      naiiveRewriter: true,
+    },
+  },
+});
 
 scramjet.init()
 
@@ -130,8 +126,6 @@ export async function setProxy(proxy) {
     await import("https://unpkg.com/@titaniumnetwork-dev/ultraviolet/dist/uv.bundle.js")
 
     await import("/uv.config.js")
-  } else {
-    import("/scram/scramjet.worker.js")
   }
   proxyOption = proxy
 }
