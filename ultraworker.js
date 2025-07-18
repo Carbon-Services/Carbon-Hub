@@ -1,7 +1,7 @@
 importScripts("https://unpkg.com/@titaniumnetwork-dev/ultraviolet@3.2.10/dist/uv.bundle.js")
 importScripts("uv.config.js")
 importScripts(__uv$config.sw)
-importScripts("/scram/scramjet.shared.js", "/scram/scramjet.worker.js")
+importScripts("/scram/scramjet.all.js");
 
 if (navigator.userAgent.includes("Firefox")) {
   Object.defineProperty(globalThis, "crossOriginIsolated", {
@@ -11,7 +11,8 @@ if (navigator.userAgent.includes("Firefox")) {
 }
 
 const uv = new UVServiceWorker()
-const scramjet = new ScramjetServiceWorker()
+const { ScramjetServiceWorker } = $scramjetLoadWorker();
+const scramjet = new ScramjetServiceWorker();
 
 self.addEventListener("install", () => {
   self.skipWaiting()
